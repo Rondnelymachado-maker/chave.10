@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../../../lib/supabase";
 
 type Client = { id: string; name: string };
 type Vehicle = { id: string; client_id: string; plate: string | null; brand: string | null; model: string | null };
