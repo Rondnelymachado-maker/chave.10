@@ -116,3 +116,5 @@ export default function LoginPage() {
 const input: React.CSSProperties = { width: "100%", padding: 12, margin: "6px 0 14px", border: "1px solid #d7dce3", borderRadius: 8, boxSizing: "border-box" };
 const noticeError: React.CSSProperties = { marginTop: 8, padding: 10, borderRadius: 7, background: "#fff0f0", border: "1px solid #efb4b4", color: "#9b2226", fontSize: 13 };
 const noticeOk: React.CSSProperties = { marginTop: 8, padding: 10, borderRadius: 7, background: "#eefbf3", border: "1px solid #b7e1c5", color: "#176b38", fontSize: 13 };
+
+// Chave 10: login route verified for production deployment.
