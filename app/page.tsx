@@ -23,12 +23,10 @@ export default function Home() {
   const [officeId, setOfficeId] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const [showClient, setShowClient] = useState(false);
   const [showVehicle, setShowVehicle] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
   const [showOS, setShowOS] = useState(false);
-
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [vehicleClient, setVehicleClient] = useState("");
@@ -37,7 +35,6 @@ export default function Home() {
   const [model, setModel] = useState("");
   const [year, setYear] = useState("");
   const [mileage, setMileage] = useState("");
-
   const [quoteClient, setQuoteClient] = useState("");
   const [quoteVehicle, setQuoteVehicle] = useState("");
   const [quoteDescription, setQuoteDescription] = useState("");
@@ -46,7 +43,6 @@ export default function Home() {
   const [quoteDiscount, setQuoteDiscount] = useState("");
   const [quoteValidUntil, setQuoteValidUntil] = useState("");
   const [quoteNotes, setQuoteNotes] = useState("");
-
   const [osClient, setOsClient] = useState("");
   const [osVehicle, setOsVehicle] = useState("");
   const [osService, setOsService] = useState("");
@@ -59,24 +55,19 @@ export default function Home() {
   const activeOS = orders.filter(o => o.status !== "Concluída").length;
 
   async function loadData() {
-    setLoading(true);
-    setError("");
+    setLoading(true); setError("");
     const { data: offices, error: officeError } = await supabase.from("offices").select("id").limit(1);
     if (officeError) { setError(officeError.message); setLoading(false); return; }
     const id = offices?.[0]?.id;
     if (!id) { setError("Nenhuma oficina encontrada."); setLoading(false); return; }
     setOfficeId(id);
-
     const [{ data: c, error: ce }, { data: v, error: ve }, { data: q, error: qe }] = await Promise.all([
       supabase.from("clients").select("id,name,phone,email").eq("office_id", id).order("created_at", { ascending: false }),
       supabase.from("vehicles").select("id,client_id,plate,brand,model,year,mileage").eq("office_id", id).order("created_at", { ascending: false }),
       supabase.from("quotes").select("id,number,client_id,vehicle_id,description,status,labor,parts,discount,total,valid_until,notes,created_at").eq("office_id", id).order("created_at", { ascending: false })
     ]);
     if (ce || ve || qe) setError(ce?.message || ve?.message || qe?.message || "Erro ao carregar dados.");
-    setClients(c || []);
-    setVehicles(v || []);
-    setQuotes(q || []);
-    setLoading(false);
+    setClients(c || []); setVehicles(v || []); setQuotes(q || []); setLoading(false);
   }
 
   useEffect(() => { loadData(); }, []);
@@ -95,9 +86,7 @@ export default function Home() {
     setVehicleClient(""); setPlate(""); setBrand(""); setModel(""); setYear(""); setMileage(""); setShowVehicle(false); await loadData(); setTab("veiculos");
   }
 
-  function resetQuote() {
-    setQuoteClient(""); setQuoteVehicle(""); setQuoteDescription(""); setQuoteLabor(""); setQuoteParts(""); setQuoteDiscount(""); setQuoteValidUntil(""); setQuoteNotes("");
-  }
+  function resetQuote() { setQuoteClient(""); setQuoteVehicle(""); setQuoteDescription(""); setQuoteLabor(""); setQuoteParts(""); setQuoteDiscount(""); setQuoteValidUntil(""); setQuoteNotes(""); }
 
   async function addQuote() {
     if (!officeId || !quoteClient) { setError("Selecione o cliente do orçamento."); return; }
@@ -115,34 +104,27 @@ export default function Home() {
     await loadData();
   }
 
-  function resetOS() {
-    setOsClient(""); setOsVehicle(""); setOsService(""); setOsLabor(""); setOsParts(""); setOsDiscount(""); setOsNotes("");
-  }
+  function resetOS() { setOsClient(""); setOsVehicle(""); setOsService(""); setOsLabor(""); setOsParts(""); setOsDiscount(""); setOsNotes(""); }
 
   function addOS() {
     if (!osClient) { setError("Selecione o cliente da OS."); return; }
     if (!osService.trim()) { setError("Informe o serviço da OS."); return; }
     const client = clients.find(c => c.id === osClient);
     const vehicle = vehicles.find(v => v.id === osVehicle);
-    const labor = Number(osLabor) || 0;
-    const parts = Number(osParts) || 0;
-    const discount = Number(osDiscount) || 0;
+    const labor = Number(osLabor) || 0, parts = Number(osParts) || 0, discount = Number(osDiscount) || 0;
     const total = Math.max(0, labor + parts - discount);
     const next = orders.length + 1;
     const newOrder: Order = { id: `OS-${String(next).padStart(3, "0")}`, client: client?.name || "Cliente", vehicle: vehicle ? `${[vehicle.brand, vehicle.model].filter(Boolean).join(" ")}${vehicle.plate ? ` · ${vehicle.plate}` : ""}` : "Não informado", service: osService.trim(), status: "Em andamento", total };
-    setOrders(current => [...current, newOrder]);
-    resetOS(); setShowOS(false); setError(""); setTab("os");
+    setOrders(current => [...current, newOrder]); setShowOS(false); resetOS(); setError(""); setTab("os");
   }
 
-  const nav: [Tab, string, string][] = [
-    ["dashboard", "▦", "Dashboard"], ["clientes", "♙", "Clientes"], ["veiculos", "▱", "Veículos"], ["orcamentos", "▤", "Orçamentos"], ["os", "⚙", "Ordens de serviço"], ["historico", "↺", "Histórico"]
-  ];
+  const nav: [Tab, string, string][] = [["dashboard", "▦", "Dashboard"], ["clientes", "♙", "Clientes"], ["veiculos", "▱", "Veículos"], ["orcamentos", "▤", "Orçamentos"], ["os", "⚙", "Ordens de serviço"], ["historico", "↺", "Histórico"]];
 
   function openNew() {
     if (tab === "clientes") setShowClient(true);
     else if (tab === "veiculos") setShowVehicle(true);
     else if (tab === "orcamentos") setShowQuote(true);
-    else if (tab === "os") { setError(""); setShowOS(true); }
+    else { setError(""); setShowOS(true); }
   }
 
   return (
@@ -152,29 +134,19 @@ export default function Home() {
         <nav>{nav.map(([key, icon, label]) => <button key={key} className={tab === key ? "nav active" : "nav"} onClick={() => setTab(key)}><span>{icon}</span>{label}</button>)}</nav>
         <div className="sideBottom"><div className="statusDot"></div><span>Oficina Demo</span></div>
       </aside>
-
       <section className="content">
-        <header className="topbar">
-          <div><span className="eyebrow">SISTEMA DE GESTÃO</span><h1>{nav.find(n => n[0] === tab)?.[2]}</h1></div>
-          <button type="button" className="primary" onClick={openNew}>{tab === "clientes" ? "+ Novo cliente" : tab === "veiculos" ? "+ Novo veículo" : tab === "orcamentos" ? "+ Novo orçamento" : "+ Nova OS"}</button>
-        </header>
-
+        <header className="topbar"><div><span className="eyebrow">SISTEMA DE GESTÃO</span><h1>{nav.find(n => n[0] === tab)?.[2]}</h1></div><button type="button" className="primary" onClick={openNew}>{tab === "clientes" ? "+ Novo cliente" : tab === "veiculos" ? "+ Novo veículo" : tab === "orcamentos" ? "+ Novo orçamento" : "+ Nova OS"}</button></header>
         {error && <div style={{margin:"14px 34px 0",padding:"12px",background:"#fff0f0",border:"1px solid #f3b3b3",borderRadius:8,color:"#9b2226"}}>{error}</div>}
         {loading && <div className="page"><div className="panel">Carregando dados da oficina...</div></div>}
-
         {!loading && tab === "dashboard" && <Dashboard total={totalOS} active={activeOS} clients={clients.length} vehicles={vehicles.length} />}
         {!loading && tab === "clientes" && <Clients clients={clients} vehicles={vehicles} />}
         {!loading && tab === "veiculos" && <Vehicles clients={clients} vehicles={vehicles} />}
         {!loading && tab === "orcamentos" && <Quotes quotes={quotes} clients={clients} vehicles={vehicles} onStatus={updateQuoteStatus} />}
         {!loading && tab === "os" && <Orders orders={orders} />}
         {!loading && tab === "historico" && <History orders={orders} />}
-
         {showClient && <div className="modalBackdrop"><div className="modal"><h2>Novo cliente</h2><input placeholder="Nome completo" value={name} onChange={e => setName(e.target.value)} /><input placeholder="Telefone" value={phone} onChange={e => setPhone(e.target.value)} /><div className="actions"><button type="button" onClick={() => setShowClient(false)}>Cancelar</button><button type="button" className="primary" onClick={addClient}>Salvar cliente</button></div></div></div>}
-
         {showVehicle && <div className="modalBackdrop"><div className="modal"><h2>Novo veículo</h2><select value={vehicleClient} onChange={e => setVehicleClient(e.target.value)} style={{width:"100%",padding:12,margin:"7px 0",border:"1px solid #d7dce3",borderRadius:8}}><option value="">Selecione o cliente</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select><input placeholder="Placa" value={plate} onChange={e => setPlate(e.target.value)} /><input placeholder="Marca" value={brand} onChange={e => setBrand(e.target.value)} /><input placeholder="Modelo" value={model} onChange={e => setModel(e.target.value)} /><input placeholder="Ano" inputMode="numeric" value={year} onChange={e => setYear(e.target.value)} /><input placeholder="Quilometragem" inputMode="numeric" value={mileage} onChange={e => setMileage(e.target.value)} /><div className="actions"><button type="button" onClick={() => setShowVehicle(false)}>Cancelar</button><button type="button" className="primary" onClick={addVehicle}>Salvar veículo</button></div></div></div>}
-
         {showQuote && <div className="modalBackdrop"><div className="modal wide"><h2>Novo orçamento</h2><select value={quoteClient} onChange={e => {setQuoteClient(e.target.value);setQuoteVehicle("");}} style={{width:"100%",padding:12,margin:"7px 0",border:"1px solid #d7dce3",borderRadius:8}}><option value="">Selecione o cliente *</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select><select value={quoteVehicle} onChange={e => setQuoteVehicle(e.target.value)} style={{width:"100%",padding:12,margin:"7px 0",border:"1px solid #d7dce3",borderRadius:8}}><option value="">Selecione o veículo</option>{vehicles.filter(v => v.client_id === quoteClient).map(v => <option key={v.id} value={v.id}>{[v.brand,v.model].filter(Boolean).join(" ")} {v.plate ? `· ${v.plate}` : ""}</option>)}</select><input placeholder="Descrição do serviço" value={quoteDescription} onChange={e => setQuoteDescription(e.target.value)} /><div className="formGrid"><input placeholder="Mão de obra (R$)" inputMode="decimal" value={quoteLabor} onChange={e => setQuoteLabor(e.target.value)} /><input placeholder="Peças (R$)" inputMode="decimal" value={quoteParts} onChange={e => setQuoteParts(e.target.value)} /></div><div className="formGrid"><input placeholder="Desconto (R$)" inputMode="decimal" value={quoteDiscount} onChange={e => setQuoteDiscount(e.target.value)} /><input type="date" value={quoteValidUntil} onChange={e => setQuoteValidUntil(e.target.value)} /></div><textarea placeholder="Observações" value={quoteNotes} onChange={e => setQuoteNotes(e.target.value)} style={{width:"100%",minHeight:80,padding:12,margin:"7px 0",border:"1px solid #d7dce3",borderRadius:8,fontFamily:"inherit"}} /><div className="quotePreview">Total: <strong>R$ {Math.max(0,(Number(quoteLabor)||0)+(Number(quoteParts)||0)-(Number(quoteDiscount)||0)).toLocaleString("pt-BR",{minimumFractionDigits:2})}</strong></div><div className="actions"><button type="button" onClick={() => {setShowQuote(false);resetQuote();}}>Cancelar</button><button type="button" className="primary" onClick={addQuote}>Salvar orçamento</button></div></div></div>}
-
         {showOS && <div className="modalBackdrop"><div className="modal wide"><h2>Nova ordem de serviço</h2><p className="muted">Cadastre a OS e ela aparecerá imediatamente na lista.</p><select value={osClient} onChange={e => {setOsClient(e.target.value);setOsVehicle("");}} style={{width:"100%",padding:12,margin:"7px 0",border:"1px solid #d7dce3",borderRadius:8}}><option value="">Selecione o cliente *</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select><select value={osVehicle} onChange={e => setOsVehicle(e.target.value)} style={{width:"100%",padding:12,margin:"7px 0",border:"1px solid #d7dce3",borderRadius:8}}><option value="">Selecione o veículo</option>{vehicles.filter(v => v.client_id === osClient).map(v => <option key={v.id} value={v.id}>{[v.brand,v.model].filter(Boolean).join(" ")} {v.plate ? `· ${v.plate}` : ""}</option>)}</select><input placeholder="Serviço realizado *" value={osService} onChange={e => setOsService(e.target.value)} /><div className="formGrid"><input placeholder="Mão de obra (R$)" inputMode="decimal" value={osLabor} onChange={e => setOsLabor(e.target.value)} /><input placeholder="Peças (R$)" inputMode="decimal" value={osParts} onChange={e => setOsParts(e.target.value)} /></div><input placeholder="Desconto (R$)" inputMode="decimal" value={osDiscount} onChange={e => setOsDiscount(e.target.value)} /><textarea placeholder="Observações" value={osNotes} onChange={e => setOsNotes(e.target.value)} style={{width:"100%",minHeight:80,padding:12,margin:"7px 0",border:"1px solid #d7dce3",borderRadius:8,fontFamily:"inherit"}} /><div className="quotePreview">Total da OS: <strong>R$ {Math.max(0,(Number(osLabor)||0)+(Number(osParts)||0)-(Number(osDiscount)||0)).toLocaleString("pt-BR",{minimumFractionDigits:2})}</strong></div><div className="actions"><button type="button" onClick={() => {setShowOS(false);resetOS();}}>Cancelar</button><button type="button" className="primary" onClick={addOS}>Criar OS</button></div></div></div>}
       </section>
     </main>
