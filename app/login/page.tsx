@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -21,12 +22,59 @@ export default function LoginPage() {
     });
   }, [router]);
 
+  function friendlyAuthError(message: string) {
+    const normalized = message.toLowerCase();
+    if (normalized.includes("rate limit") || normalized.includes("too many requests")) {
+      return "O limite de envio de e-mails foi atingido temporariamente. Aguarde um pouco antes de tentar novamente. Sua oficina não deve ser criada novamente enquanto esse limite estiver ativo.";
+    }
+    if (normalized.includes("already registered") || normalized.includes("user already registered")) {
+      return "Este e-mail já está cadastrado. Use a opção Entrar para acessar sua oficina.";
+    }
+    if (normalized.includes("email not confirmed")) {
+      return "Seu e-mail ainda não foi confirmado. Confira sua caixa de entrada ou solicite um novo e-mail de confirmação.";
+    }
+    if (normalized.includes("invalid login credentials")) {
+      return "E-mail ou senha incorretos.";
+    }
+    return message;
+  }
+
+  async function resendConfirmation() {
+    setError("");
+    setMessage("");
+    if (!email.trim()) {
+      setError("Informe seu e-mail para reenviar a confirmação.");
+      return;
+    }
+    setLoading(true);
+    const { error: resendError } = await supabase.auth.resend({
+      type: "signup",
+      email: email.trim(),
+    });
+    setLoading(false);
+    if (resendError) {
+      setError(friendlyAuthError(resendError.message));
+      return;
+    }
+    setMessage("E-mail de confirmação solicitado. Verifique sua caixa de entrada e também o spam.");
+  }
+
   async function submit(e: FormEvent) {
     e.preventDefault();
     setError("");
     setMessage("");
+    setNeedsConfirmation(false);
+
     if (!email.trim() || !password) {
       setError("Informe e-mail e senha.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Use uma senha com pelo menos 8 caracteres.");
+      return;
+    }
+    if (mode === "signup" && !name.trim()) {
+      setError("Informe o nome do responsável.");
       return;
     }
     if (mode === "signup" && !officeName.trim()) {
@@ -42,7 +90,11 @@ export default function LoginPage() {
       });
       setLoading(false);
       if (authError) {
-        setError("Não foi possível entrar. Confira e-mail e senha.");
+        const friendly = friendlyAuthError(authError.message);
+        setError(friendly);
+        if (authError.message.toLowerCase().includes("email not confirmed")) {
+          setNeedsConfirmation(true);
+        }
         return;
       }
       router.replace("/");
@@ -61,15 +113,19 @@ export default function LoginPage() {
       },
     });
     setLoading(false);
+
     if (authError) {
-      setError(authError.message);
+      setError(friendlyAuthError(authError.message));
       return;
     }
+
     if (!data.session) {
-      setMessage("Cadastro realizado. Confira seu e-mail para confirmar a conta e depois faça login.");
+      setMessage("Cadastro recebido. Confirme seu e-mail para ativar o acesso. Se o e-mail não chegar, aguarde alguns minutos antes de solicitar outro.");
+      setNeedsConfirmation(true);
       setMode("login");
       return;
     }
+
     router.replace("/");
     router.refresh();
   }
@@ -83,8 +139,8 @@ export default function LoginPage() {
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, background: "#eef1f5", padding: 5, borderRadius: 9, marginBottom: 20 }}>
-          <button type="button" onClick={() => { setMode("login"); setError(""); setMessage(""); }} style={{ border: 0, borderRadius: 7, padding: 10, fontWeight: 700, background: mode === "login" ? "white" : "transparent", cursor: "pointer" }}>Entrar</button>
-          <button type="button" onClick={() => { setMode("signup"); setError(""); setMessage(""); }} style={{ border: 0, borderRadius: 7, padding: 10, fontWeight: 700, background: mode === "signup" ? "white" : "transparent", cursor: "pointer" }}>Criar oficina</button>
+          <button type="button" onClick={() => { setMode("login"); setError(""); setMessage(""); setNeedsConfirmation(false); }} style={{ border: 0, borderRadius: 7, padding: 10, fontWeight: 700, background: mode === "login" ? "white" : "transparent", cursor: "pointer" }}>Entrar</button>
+          <button type="button" onClick={() => { setMode("signup"); setError(""); setMessage(""); setNeedsConfirmation(false); }} style={{ border: 0, borderRadius: 7, padding: 10, fontWeight: 700, background: mode === "signup" ? "white" : "transparent", cursor: "pointer" }}>Criar oficina</button>
         </div>
 
         <form onSubmit={submit}>
@@ -97,14 +153,20 @@ export default function LoginPage() {
           <label>E-mail</label>
           <input type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="seu@email.com" style={input} />
           <label>Senha</label>
-          <input type="password" autoComplete={mode === "login" ? "current-password" : "new-password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Mínimo recomendado: 8 caracteres" style={input} />
+          <input type="password" autoComplete={mode === "login" ? "current-password" : "new-password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Mínimo: 8 caracteres" style={input} />
 
           {error && <div style={noticeError}>{error}</div>}
           {message && <div style={noticeOk}>{message}</div>}
 
-          <button disabled={loading} type="submit" style={{ width: "100%", marginTop: 12, background: "#f59b32", color: "white", border: 0, borderRadius: 8, padding: 13, fontWeight: 800, cursor: "pointer" }}>
+          <button disabled={loading} type="submit" style={{ width: "100%", marginTop: 12, background: "#f59b32", color: "white", border: 0, borderRadius: 8, padding: 13, fontWeight: 800, cursor: loading ? "wait" : "pointer" }}>
             {loading ? "Aguarde..." : mode === "login" ? "Entrar no Chave 10" : "Criar minha oficina"}
           </button>
+
+          {needsConfirmation && (
+            <button disabled={loading} type="button" onClick={resendConfirmation} style={{ width: "100%", marginTop: 10, background: "white", color: "#172033", border: "1px solid #d7dce3", borderRadius: 8, padding: 12, fontWeight: 700, cursor: loading ? "wait" : "pointer" }}>
+              Reenviar confirmação por e-mail
+            </button>
+          )}
         </form>
 
         <p style={{ fontSize: 12, color: "#687386", textAlign: "center", marginTop: 20 }}>Seus dados ficam separados por oficina.</p>
@@ -117,4 +179,4 @@ const input: React.CSSProperties = { width: "100%", padding: 12, margin: "6px 0 
 const noticeError: React.CSSProperties = { marginTop: 8, padding: 10, borderRadius: 7, background: "#fff0f0", border: "1px solid #efb4b4", color: "#9b2226", fontSize: 13 };
 const noticeOk: React.CSSProperties = { marginTop: 8, padding: 10, borderRadius: 7, background: "#eefbf3", border: "1px solid #b7e1c5", color: "#176b38", fontSize: 13 };
 
-// Chave 10: login route verified for production deployment.
+// Chave 10: login and signup flow hardened for production.
