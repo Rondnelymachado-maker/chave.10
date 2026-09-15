@@ -1,0 +1,65 @@
+name: Corrigir dashboard da oficina
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-dashboard:
+    if: ${{ !contains(github.event.head_commit.message, 'sync: dashboard office') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Corrigir dashboard
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          path = Path('app/page.tsx')
+          text = path.read_text(encoding='utf-8')
+          original = text
+
+          text = text.replace(
+              'const[officeId,setOfficeId]=useState("")',
+              'const[officeId,setOfficeId]=useState(""),[officeName,setOfficeName]=useState("Oficina")',
+              1,
+          )
+
+          old_load = re.search(r'async function loadData\(\)\{.*?\n useEffect', text, flags=re.S)
+          if old_load:
+              new_load = '''async function loadData(){setLoading(true);setError("");const{data:userData,error:ue}=await supabase.auth.getUser();if(ue||!userData?.user){setError("Sessão não encontrada. Faça login novamente.");setLoading(false);return}const{data:profile,error:pe}=await supabase.from("user_profiles").select("office_id").eq("user_id",userData.user.id).maybeSingle();if(pe||!profile?.office_id){setError(pe?.message||"Oficina do usuário não encontrada.");setLoading(false);return}const id=profile.office_id;setOfficeId(id);const{data:office,error:oe}=await supabase.from("offices").select("id,name").eq("id",id).maybeSingle();if(oe||!office){setError(oe?.message||"Oficina não encontrada.");setLoading(false);return}setOfficeName(office.name||"Minha Oficina");const[c,v,q,o]=await Promise.all([supabase.from("clients").select("id,name,phone,email").eq("office_id",id).order("created_at",{ascending:false}),supabase.from("vehicles").select("id,client_id,plate,brand,model,year,mileage").eq("office_id",id).order("created_at",{ascending:false}),supabase.from("quotes").select("id,number,client_id,vehicle_id,description,status,labor,parts,discount,total,valid_until,notes,created_at").eq("office_id",id).order("created_at",{ascending:false}),supabase.from("service_orders").select("id,number,quote_id,client_id,vehicle_id,description,status,labor,parts,discount,total,notes,created_at").eq("office_id",id).order("created_at",{ascending:false})]);const e=c.error||v.error||q.error||o.error;if(e)setError(e.message);setClients(c.data||[]);setVehicles(v.data||[]);setQuotes(q.data||[]);setOrders(o.data||[]);setLoading(false)}
+ useEffect'''
+              text = text[:old_load.start()] + new_load + text[old_load.end():]
+
+          text = text.replace(
+              'async function resolveOfficeId(){if(officeId)return officeId;const{data,error:e}=await supabase.from("offices").select("id").limit(1).maybeSingle();if(e||!data?.id){setError(e?.message||"Nenhuma oficina encontrada.");return null}setOfficeId(data.id);return data.id}',
+              'async function resolveOfficeId(){if(officeId)return officeId;const{data:userData,error:ue}=await supabase.auth.getUser();if(ue||!userData?.user){setError("Sessão não encontrada. Faça login novamente.");return null}const{data:profile,error:e}=await supabase.from("user_profiles").select("office_id").eq("user_id",userData.user.id).maybeSingle();if(e||!profile?.office_id){setError(e?.message||"Oficina do usuário não encontrada.");return null}setOfficeId(profile.office_id);return profile.office_id}',
+              1,
+          )
+
+          text = text.replace('>● Oficina Demo</div>', '>{officeName}</div>', 1)
+
+          if text == original:
+              print('Nenhuma alteração necessária.')
+          else:
+              path.write_text(text, encoding='utf-8')
+              print('Dashboard corrigido.')
+          
+      - name: Commit e push
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "Sem alterações."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/page.tsx
+          git commit -m "sync: dashboard office"
+          git push
