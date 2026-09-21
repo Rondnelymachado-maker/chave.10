@@ -32,7 +32,10 @@ export default function VendasPage(){
             <span style={{width:42,height:42,borderRadius:10,background:"#f5b942",display:"grid",placeItems:"center",fontWeight:900}}>🔑</span>
             <span><b style={{display:"block",letterSpacing:1}}>CHAVE 10</b><small style={{color:"#718096"}}>Gestão para oficinas</small></span>
           </Link>
-          <Link href="/login" style={{color:"#172033",textDecoration:"none",fontWeight:800}}>Entrar</Link>
+          <div style={{display:"flex",alignItems:"center",gap:18}}>
+            <Link href="/login" style={{color:"#172033",textDecoration:"none",fontWeight:800}}>Entrar</Link>
+            <Link href="/vendas/cadastro" style={{background:"#f5b942",color:"#172033",textDecoration:"none",padding:"10px 15px",borderRadius:8,fontWeight:900}}>Teste grátis</Link>
+          </div>
         </div>
       </header>
 
@@ -42,7 +45,7 @@ export default function VendasPage(){
           <h1 style={{fontSize:"clamp(42px,6vw,68px)",lineHeight:1.02,letterSpacing:-2,margin:"18px 0"}}>Organize sua oficina. Simplifique sua rotina.</h1>
           <p style={{fontSize:19,lineHeight:1.6,color:"#667085",maxWidth:650}}>Clientes, veículos, orçamentos, ordens de serviço, histórico e financeiro em um único sistema.</p>
           <div style={{display:"flex",gap:12,flexWrap:"wrap",marginTop:28}}>
-            <a href="#plano" style={{background:"#f5b942",color:"#172033",textDecoration:"none",padding:"14px 22px",borderRadius:9,fontWeight:900}}>Ver plano e preço →</a>
+            <Link href="/vendas/cadastro" style={{background:"#f5b942",color:"#172033",textDecoration:"none",padding:"14px 22px",borderRadius:9,fontWeight:900}}>Começar teste grátis →</Link>
             <Link href="/login" style={{background:"#fff",color:"#172033",textDecoration:"none",padding:"14px 22px",borderRadius:9,fontWeight:800,border:"1px solid #dce1e8"}}>Entrar no sistema</Link>
           </div>
           <p style={{fontSize:13,color:"#7b8794",marginTop:15}}>14 dias de teste • R$ 29,99/mês • Acesso online</p>
@@ -104,11 +107,9 @@ export default function VendasPage(){
             </div>
             <p style={{color:"#667085",lineHeight:1.5}}>Tenha os principais processos da oficina centralizados em um único sistema.</p>
             <div style={{display:"grid",gap:11,margin:"24px 0"}}>
-              {["Clientes","Veículos","Orçamentos","Ordens de serviço","Histórico de veículos","Financeiro"].map(item=>
-                <div key={item} style={{fontWeight:700}}>✓ {item}</div>
-              )}
+              {["Clientes","Veículos","Orçamentos","Ordens de serviço","Histórico de veículos","Financeiro"].map(item=><div key={item} style={{fontWeight:700}}>✓ {item}</div>)}
             </div>
-            <Link href="/login" style={{display:"block",textAlign:"center",background:"#f5b942",color:"#172033",textDecoration:"none",padding:"15px",borderRadius:9,fontWeight:900}}>Começar agora</Link>
+            <Link href="/vendas/cadastro" style={{display:"block",textAlign:"center",background:"#f5b942",color:"#172033",textDecoration:"none",padding:"15px",borderRadius:9,fontWeight:900}}>Solicitar teste grátis</Link>
             <p style={{textAlign:"center",fontSize:12,color:"#7b8794",margin:"13px 0 0"}}>14 dias de teste para conhecer o sistema.</p>
           </article>
         </div>
@@ -120,12 +121,7 @@ export default function VendasPage(){
           <p style={{color:"#667085"}}>Informações rápidas sobre o Chave 10.</p>
         </div>
         <div style={{display:"grid",gap:12}}>
-          {faqs.map(([question,answer])=>(
-            <details key={question} style={{background:"#fff",border:"1px solid #e5e9ef",borderRadius:12,padding:"17px 20px"}}>
-              <summary style={{fontWeight:800,cursor:"pointer"}}>{question}</summary>
-              <p style={{color:"#667085",lineHeight:1.55,margin:"12px 0 0"}}>{answer}</p>
-            </details>
-          ))}
+          {faqs.map(([question,answer])=><details key={question} style={{background:"#fff",border:"1px solid #e5e9ef",borderRadius:12,padding:"17px 20px"}}><summary style={{fontWeight:800,cursor:"pointer"}}>{question}</summary><p style={{color:"#667085",lineHeight:1.55,margin:"12px 0 0"}}>{answer}</p></details>)}
         </div>
       </section>
 
@@ -133,7 +129,7 @@ export default function VendasPage(){
         <div style={{maxWidth:850,margin:"auto",textAlign:"center"}}>
           <h2 style={{fontSize:40,margin:"0 0 12px"}}>Sua oficina merece mais organização.</h2>
           <p style={{color:"#b7c0ce",fontSize:17,lineHeight:1.6}}>Conheça o Chave 10 e centralize a gestão da sua oficina.</p>
-          <Link href="/login" style={{display:"inline-block",marginTop:15,background:"#f5b942",color:"#172033",textDecoration:"none",padding:"14px 25px",borderRadius:9,fontWeight:900}}>Começar agora →</Link>
+          <Link href="/vendas/cadastro" style={{display:"inline-block",marginTop:15,background:"#f5b942",color:"#172033",textDecoration:"none",padding:"14px 25px",borderRadius:9,fontWeight:900}}>Começar agora →</Link>
         </div>
       </section>
 
