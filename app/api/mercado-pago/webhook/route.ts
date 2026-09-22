@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error("Supabase server credentials are not configured.");
+  return createClient(url, key);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,7 +36,7 @@ export async function POST(req: NextRequest) {
       const periodStart = subscription?.date_created || new Date().toISOString();
       const periodEnd = subscription?.next_payment_date || null;
 
-      await supabaseAdmin.from("office_subscriptions").update({
+      await getSupabaseAdmin().from("office_subscriptions").update({
         status,
         checkout_status: mpStatus,
         provider: "mercado_pago",
@@ -45,9 +47,9 @@ export async function POST(req: NextRequest) {
       }).eq("office_id", officeId).eq("provider_subscription_id", String(subscription.id));
 
       if (active) {
-        await supabaseAdmin.from("offices").update({ subscription_status: "active" }).eq("id", officeId);
+        await getSupabaseAdmin().from("offices").update({ subscription_status: "active" }).eq("id", officeId);
       } else if (status === "canceled") {
-        await supabaseAdmin.from("offices").update({ subscription_status: "canceled" }).eq("id", officeId);
+        await getSupabaseAdmin().from("offices").update({ subscription_status: "canceled" }).eq("id", officeId);
       }
     }
 
