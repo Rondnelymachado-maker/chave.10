@@ -1,28 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error("Supabase server credentials are not configured.");
+  return createClient(url, key);
+}
 
 export async function POST(req: NextRequest) {
   try {
     const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
     if (!token) return NextResponse.json({ error: "Sessão não informada." }, { status: 401 });
 
-    const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
+    const { data: userData, error: userError } = await getSupabaseAdmin().auth.getUser(token);
     if (userError || !userData.user) return NextResponse.json({ error: "Sessão inválida." }, { status: 401 });
 
-    const { data: profile, error: profileError } = await supabaseAdmin
+    const { data: profile, error: profileError } = await getSupabaseAdmin()
       .from("user_profiles").select("office_id").eq("user_id", userData.user.id).single();
     if (profileError || !profile?.office_id) return NextResponse.json({ error: "Oficina não encontrada." }, { status: 404 });
 
-    const { data: plan, error: planError } = await supabaseAdmin
+    const { data: plan, error: planError } = await getSupabaseAdmin()
       .from("plans").select("id,name,price_monthly").eq("slug","chave-10").eq("is_active",true).single();
     if (planError || !plan) return NextResponse.json({ error: "Plano Chave 10 não encontrado." }, { status: 404 });
 
-    const { data: existing } = await supabaseAdmin
+    const { data: existing } = await getSupabaseAdmin()
       .from("office_subscriptions").select("id,status,provider_subscription_id")
       .eq("office_id", profile.office_id)
       .in("status", ["pending","authorized","active","trial"])
@@ -61,7 +63,7 @@ export async function POST(req: NextRequest) {
     }
 
     const now = new Date().toISOString();
-    const { error: saveError } = await supabaseAdmin.from("office_subscriptions").upsert({
+    const { error: saveError } = await getSupabaseAdmin().from("office_subscriptions").upsert({
       office_id: officeId,
       plan_id: plan.id,
       status: "pending",
