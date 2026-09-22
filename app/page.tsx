@@ -43,6 +43,7 @@ export default function Home(){
   doc.setFont("helvetica","bold");doc.text("DESCRIÇÃO DO SERVIÇO",14,121);doc.setFont("helvetica","normal");
   const lines=doc.splitTextToSize(q.description||"Serviço não informado",180);doc.text(lines,14,129);
   let y=129+lines.length*5+8;
+  if(q.parts_description){doc.setFont("helvetica","bold");doc.text("DESCRIÇÃO DAS PEÇAS",14,y+2);doc.setFont("helvetica","normal");const partLines=doc.splitTextToSize(q.parts_description,180);doc.text(partLines,14,y+10);y=y+10+partLines.length*5+8;}
   doc.setFont("helvetica","bold");doc.text("RESUMO FINANCEIRO",14,y);y+=9;doc.setFont("helvetica","normal");
   doc.text("Mão de obra",14,y);doc.text(brl(q.labor),165,y);y+=7;
   doc.text("Peças",14,y);doc.text(brl(q.parts),165,y);y+=7;
