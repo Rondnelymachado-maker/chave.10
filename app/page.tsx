@@ -89,7 +89,7 @@ export default function Home() {
       <section className="c10-section" id="duvidas"><div className="c10-wrap"><div className="c10-eyebrow">DÚVIDAS FREQUENTES</div><h2 className="c10-title">Perguntas frequentes.</h2><div className="c10-faq"><div className="c10-faq-item"><b>Preciso instalar algum programa?</b><p>Não. O Chave 10 funciona pelo navegador e não exige instalação.</p></div><div className="c10-faq-item"><b>Posso usar em mais de um computador?</b><p>Sim. Você pode acessar de qualquer lugar, em quantos dispositivos precisar.</p></div><div className="c10-faq-item"><b>Como é o pagamento?</b><p>O pagamento é feito pelo Mercado Pago, com as opções disponíveis no checkout.</p></div><div className="c10-faq-item"><b>O que está incluso no plano?</b><p>Clientes, veículos, orçamentos, ordens de serviço, estoque e financeiro.</p></div></div></div></section>
 
       <section className="c10-cta"><h2>Pronto para levar sua oficina a um novo nível?</h2><p>Comece agora e veja a diferença na sua rotina.</p><a className="c10-btn c10-primary" href={MERCADO_PAGO_URL}>Começar agora →</a></section>
-      <footer className="c10-footer">© 2026 Chave 10. Todos os direitos reservados. · <a href="/login" style={{color:"#cbd5e1"}}>Entrar</a></footer><a className="c10-wa" href="https://wa.me/" aria-label="WhatsApp">◉</a>
+      <footer className="c10-footer">© 2026 Chave 10. Todos os direitos reservados. · <a href="/login" style={{color:"#cbd5e1"}}>Entrar</a></footer>
     </main>
   );
 }
