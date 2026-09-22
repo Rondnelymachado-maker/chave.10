@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
+const MERCADO_PAGO_SUBSCRIPTION_URL = "https://mpago.la/18fhBWP";
+
 export default function AssinaturaPage() {
   const [loading,setLoading]=useState(true);
-  const [creating,setCreating]=useState(false);
   const [status,setStatus]=useState("");
   const [subscription,setSubscription]=useState<any>(null);
   const [error,setError]=useState("");
@@ -21,15 +22,8 @@ export default function AssinaturaPage() {
     setLoading(false);
   }
 
-  async function subscribe() {
-    setCreating(true); setError("");
-    const { data:session } = await supabase.auth.getSession();
-    const token=session.session?.access_token;
-    if(!token){setError("Sessão expirada. Faça login novamente.");setCreating(false);return;}
-    const response=await fetch("/api/mercado-pago/subscribe",{method:"POST",headers:{Authorization:`Bearer ${token}`}});
-    const result=await response.json();
-    if(!response.ok){setError(result.error||"Não foi possível iniciar o pagamento.");setCreating(false);return;}
-    window.location.href=result.checkoutUrl;
+  function subscribe() {
+    window.location.href = MERCADO_PAGO_SUBSCRIPTION_URL;
   }
 
   useEffect(()=>{const params=new URLSearchParams(window.location.search);setStatus(params.get("status")||"");load();},[]);
@@ -51,11 +45,11 @@ export default function AssinaturaPage() {
         <p>Pagamento pelo Mercado Pago.</p>
         <ul style={{lineHeight:1.8,paddingLeft:22}}>
           <li>Clientes e veículos</li><li>Orçamentos e PDF</li><li>Ordens de serviço</li><li>Estoque</li><li>Financeiro</li>
-          <li><b>Cartão e PIX disponíveis no checkout</b></li>
+          <li><b>Pagamento recorrente pelo Mercado Pago</b></li>
         </ul>
         {subscription?.status==="active" ? <div style={{background:"#e9f8ef",padding:16,borderRadius:10,fontWeight:700}}>Assinatura ativa ✓</div> :
-        <button onClick={subscribe} disabled={creating} style={{width:"100%",padding:15,border:0,borderRadius:10,background:"#009ee3",color:"#fff",fontSize:17,fontWeight:700,cursor:"pointer"}}>{creating?"Abrindo Mercado Pago...":"Assinar por R$ 29,99/mês"}</button>}
-        <p style={{fontSize:12,color:"#687386",marginTop:16}}>O checkout é processado pelo Mercado Pago. O Chave 10 não armazena os dados do cartão.</p>
+        <button onClick={subscribe} style={{width:"100%",padding:15,border:0,borderRadius:10,background:"#009ee3",color:"#fff",fontSize:17,fontWeight:700,cursor:"pointer"}}>Assinar por R$ 29,99/mês</button>}
+        <p style={{fontSize:12,color:"#687386",marginTop:16}}>O pagamento e a cobrança recorrente são processados pelo Mercado Pago. O Chave 10 não armazena dados de cartão.</p>
       </div>
     </div>
   </main>;
