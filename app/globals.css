@@ -3,3 +3,32 @@
 .mobileNav{display:none}
 @media(max-width:650px){.appShell{display:block!important;min-height:100vh!important}.appShell>aside{display:none!important}.appContent{width:100%!important}.appContent header{padding:16px 18px!important;min-height:78px;box-sizing:border-box}.appContent header h1{font-size:24px!important}.pageContent{padding:16px!important}.dashboardCards{grid-template-columns:1fr!important;gap:12px!important}.dashboardCards>div{min-width:0!important;overflow:hidden}.mobileNav{display:flex!important;overflow-x:auto;gap:6px;padding:8px 10px;background:#172033;border-bottom:1px solid #2a3850;scrollbar-width:none}.mobileNav::-webkit-scrollbar{display:none}.mobileNav button{flex:0 0 auto;border:0;border-radius:8px;background:transparent;color:#dbe3ee;padding:8px 10px;font-size:12px;display:flex;gap:5px;align-items:center;white-space:nowrap}.mobileNav button.active{background:#2a3850;color:#fff}.pageContent table{min-width:720px}}
 @media(min-width:651px) and (max-width:900px){.dashboardCards{grid-template-columns:1fr 1fr!important}}
+
+/* Mobile UI refinement */
+@media(max-width:650px){
+ .appShell{display:block!important;min-height:100vh!important;overflow-x:hidden!important}
+ .appSidebar{display:none!important}
+ .appContent{width:100%!important;min-width:0!important}
+ .appHeader{padding:14px 16px!important;min-height:72px!important;gap:10px!important;box-sizing:border-box!important;align-items:center!important}
+ .appHeader>div:first-child{min-width:0!important}
+ .appHeader small{font-size:9px!important}
+ .appHeader h1{font-size:24px!important;line-height:1.1!important;white-space:nowrap!important}
+ .appHeader>button{padding:9px 11px!important;font-size:12px!important;white-space:nowrap!important;flex:0 0 auto!important}
+ .pageContent{padding:12px!important;box-sizing:border-box!important}
+ .pageContent>div{max-width:100%!important;box-sizing:border-box!important}
+ .pageContent table.dataTable{display:table!important;width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important}
+ .pageContent .dataTable th,.pageContent .dataTable td{padding:10px 5px!important;font-size:11px!important;word-break:break-word!important;vertical-align:top!important}
+ .pageContent .dataTable th{font-size:9px!important}
+ .pageContent .dataTable th:nth-child(3),.pageContent .dataTable td:nth-child(3),.pageContent .dataTable th:nth-child(4),.pageContent .dataTable td:nth-child(4){display:none!important}
+ .pageContent .dataTable th:first-child,.pageContent .dataTable td:first-child{width:25%!important}
+ .pageContent .dataTable th:nth-child(2),.pageContent .dataTable td:nth-child(2){width:25%!important}
+ .pageContent .dataTable th:nth-last-child(2),.pageContent .dataTable td:nth-last-child(2){width:18%!important}
+ .pageContent .dataTable th:last-child,.pageContent .dataTable td:last-child{width:32%!important}
+ .pageContent .dataTable td:last-child button{display:block!important;width:100%!important;margin:4px 0!important;padding:7px 5px!important;font-size:10px!important;box-sizing:border-box!important}
+ .pageContent .dataTable td:last-child span{display:block!important;margin-top:5px!important}
+ .pageContent .dataTable td{overflow-wrap:anywhere!important}
+ .mobileNav{display:flex!important;position:sticky;top:0;z-index:20}
+ .welcome{padding:18px!important;margin-bottom:14px!important}
+ .welcome h2{font-size:22px!important}
+ .dashboardCards{grid-template-columns:1fr!important}
+}
