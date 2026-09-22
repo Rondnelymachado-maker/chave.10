@@ -50,7 +50,7 @@ export default function Estoque(){
    const{error:e}=await supabase.from("products").update({quantity:Number(existing.quantity||0)+qty,unit_price:price,updated_at:new Date().toISOString()}).eq("id",existing.id).eq("office_id",id);
    if(e){setSaving(false);setError(e.message);return}productId=existing.id;
   }else{
-   const{data:p,error:e}=await supabase.from("products").insert({office_id:id,description,quantity:qty,unit_price:price}).select("id").single();
+   const{data:p,error:e}=await supabase.from("products").insert({office_id:id,description,quantity:qty,unit_price:price,code:"P-"+Date.now().toString(36).toUpperCase()}).select("id").single();
    if(e||!p){setSaving(false);setError(e?.message||"Não foi possível cadastrar o produto.");return}productId=p.id;
   }
   const{error:me}=await supabase.from("inventory_movements").insert({office_id:id,product_id:productId,type:"entrada",quantity:qty,unit_price:price,description:"Entrada de estoque"});
