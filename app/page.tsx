@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { jsPDF } from "jspdf";
 
 type Tab="dashboard"|"clientes"|"veiculos"|"orcamentos"|"os"|"historico";
 type Client={id:string;name:string;phone:string|null;email?:string|null};
@@ -21,6 +22,37 @@ export default function Home(){
  const[quoteClient,setQuoteClient]=useState(""),[quoteVehicle,setQuoteVehicle]=useState(""),[quoteDescription,setQuoteDescription]=useState(""),[quoteLabor,setQuoteLabor]=useState(""),[quoteParts,setQuoteParts]=useState(""),[quoteDiscount,setQuoteDiscount]=useState(""),[quoteValidUntil,setQuoteValidUntil]=useState(""),[quoteNotes,setQuoteNotes]=useState("");
  const[osClient,setOsClient]=useState(""),[osVehicle,setOsVehicle]=useState(""),[osService,setOsService]=useState(""),[osLabor,setOsLabor]=useState(""),[osParts,setOsParts]=useState(""),[osDiscount,setOsDiscount]=useState(""),[osNotes,setOsNotes]=useState("");
  const[historySearch,setHistorySearch]=useState(""),[selectedVehicleId,setSelectedVehicleId]=useState("");
+ function buildQuotePdf(q:Quote){
+  const doc=new jsPDF();
+  const client=clients.find(c=>c.id===q.client_id), vehicle=vehicles.find(v=>v.id===q.vehicle_id);
+  doc.setFillColor(23,32,51);doc.rect(0,0,210,28,"F");
+  doc.setTextColor(255,255,255);doc.setFontSize(18);doc.setFont("helvetica","bold");doc.text("CHAVE 10",14,18);
+  doc.setTextColor(23,32,51);doc.setFontSize(17);doc.text("ORÇAMENTO",14,42);
+  doc.setFontSize(10);doc.setFont("helvetica","normal");
+  doc.text("Número: "+q.number,14,51);doc.text("Data: "+new Date(q.created_at).toLocaleDateString("pt-BR"),100,51);
+  doc.text("Cliente: "+(client?.name||"—"),14,61);doc.text("Telefone: "+(client?.phone||"—"),14,68);
+  doc.text("Veículo: "+(vehicle?[vehicle.brand,vehicle.model].filter(Boolean).join(" "):"—")+(vehicle?.plate?" - "+vehicle.plate:""),14,75);
+  doc.setFont("helvetica","bold");doc.text("Serviço",14,89);doc.setFont("helvetica","normal");
+  const lines=doc.splitTextToSize(q.description||"Serviço não informado",180);doc.text(lines,14,97);
+  let y=97+lines.length*5+10;doc.text("Mão de obra: "+brl(q.labor),14,y);y+=7;doc.text("Peças: "+brl(q.parts),14,y);y+=7;doc.text("Desconto: "+brl(q.discount),14,y);y+=10;
+  doc.setFont("helvetica","bold");doc.setFontSize(14);doc.text("TOTAL: "+brl(q.total),14,y);
+  doc.setFontSize(10);doc.setFont("helvetica","normal");if(q.valid_until)doc.text("Validade: "+new Date(q.valid_until+"T00:00:00").toLocaleDateString("pt-BR"),14,y+10);
+  if(q.notes)doc.text(doc.splitTextToSize("Observações: "+q.notes,180),14,y+20);
+  doc.setFontSize(9);doc.setTextColor(104,115,134);doc.text("Chave 10 - Gestão de Oficina",14,285);
+  return {doc,client};
+ }
+ function downloadQuotePdf(q:Quote){buildQuotePdf(q).doc.save("orcamento-"+q.number+".pdf");}
+ async function shareQuoteWhatsApp(q:Quote){
+  setError("");try{
+   const {doc,client}=buildQuotePdf(q);const blob=doc.output("blob");const file=new File([blob],"orcamento-"+q.number+".pdf",{type:"application/pdf"});
+   const message="Olá, "+(client?.name||"")+"! Segue o orçamento "+q.number+" da "+officeName+". Total: "+brl(q.total)+".";
+   if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){await navigator.share({files:[file],text:message});return}
+   downloadQuotePdf(q);
+   const digits=(client?.phone||"").replace(/\D/g,"");const phone=digits?(digits.startsWith("55")?digits:"55"+digits):"";
+   window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(message),"_blank");
+   setError("PDF baixado e WhatsApp aberto. Anexe o PDF na conversa.");
+  }catch(e){if(e instanceof Error&&e.name==="AbortError")return;setError(e instanceof Error?e.message:"Não foi possível compartilhar o orçamento.")}
+ }
  async function resolveOffice(){const{data:userResult,error:ue}=await supabase.auth.getUser();if(ue||!userResult.user){setError("Sessão inválida. Faça login novamente.");return null}const{data:profile,error:pe}=await supabase.from("user_profiles").select("office_id").eq("user_id",userResult.user.id).single();if(pe||!profile?.office_id){setError(pe?.message||"Oficina do usuário não encontrada.");return null}const{data:office,error:oe}=await supabase.from("offices").select("id,name").eq("id",profile.office_id).single();if(oe||!office){setError(oe?.message||"Oficina não encontrada.");return null}setOfficeId(office.id);setOfficeName(office.name||"Minha Oficina");return office.id}
  async function loadData(){setLoading(true);setError("");const id=await resolveOffice();if(!id){setLoading(false);return}const[c,v,q,o]=await Promise.all([supabase.from("clients").select("id,name,phone,email").eq("office_id",id).order("created_at",{ascending:false}),supabase.from("vehicles").select("id,client_id,plate,brand,model,year,mileage").eq("office_id",id).order("created_at",{ascending:false}),supabase.from("quotes").select("id,number,client_id,vehicle_id,description,status,labor,parts,discount,total,valid_until,notes,created_at").eq("office_id",id).order("created_at",{ascending:false}),supabase.from("service_orders").select("id,number,quote_id,client_id,vehicle_id,description,status,labor,parts,discount,total,notes,created_at").eq("office_id",id).order("created_at",{ascending:false})]);const e=c.error||v.error||q.error||o.error;if(e)setError(e.message);setClients(c.data||[]);setVehicles(v.data||[]);setQuotes(q.data||[]);setOrders(o.data||[]);setLoading(false)}
  useEffect(()=>{loadData()},[]);
