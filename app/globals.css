@@ -95,3 +95,13 @@
  .dashboardCards>div small{display:block!important;font-size:11px!important;line-height:1.25!important;overflow-wrap:anywhere!important}
  .dashboardCards>div h2{font-size:20px!important;line-height:1.15!important;overflow-wrap:anywhere!important}
 }
+
+/* Stock mobile */
+@media(max-width:650px){
+ .stockPage{padding:14px!important;overflow-x:hidden!important}.stockInner{width:100%!important;max-width:none!important}
+ .stockHeader{align-items:stretch!important;gap:12px!important}.stockHeader h1{font-size:34px!important}.stockHeader p{font-size:14px!important;line-height:1.4!important}
+ .stockActions{width:100%!important;display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:6px!important}.stockActions button{min-height:44px!important;padding:8px 5px!important;font-size:11px!important}
+ .stockMetrics{grid-template-columns:1fr 1fr!important;gap:10px!important}.stockMetrics>div{padding:14px!important;min-width:0!important}.stockMetrics>div:last-child{grid-column:1/-1}.stockMetrics h2{font-size:20px!important;overflow-wrap:anywhere!important}
+ .stockTable{table-layout:fixed!important;width:100%!important}.stockTable th,.stockTable td{padding:8px 5px!important;font-size:10px!important;overflow-wrap:anywhere!important}.stockTable th:nth-child(4),.stockTable td:nth-child(4){display:none!important}
+ .stockPage>div>div{min-width:0!important}
+}
