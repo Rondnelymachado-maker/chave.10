@@ -3,12 +3,12 @@
 const MERCADO_PAGO_URL = "https://mpago.la/18fhBWP";
 
 const features = [
-  ["👥","Clientes e veículos","Cadastre clientes, veículos, telefone, placa, modelo, ano e quilometragem."],
-  ["🧾","Orçamentos em PDF","Monte orçamentos profissionais, calcule valores e gere PDF para enviar ao cliente."],
-  ["🔧","Ordens de serviço","Transforme orçamento aprovado em OS e acompanhe o serviço até a entrega."],
-  ["📦","Estoque","Cadastre peças, entradas e saídas e acompanhe o valor disponível em estoque."],
-  ["💰","Financeiro","Visualize os recebimentos das ordens concluídas e acompanhe o movimento da oficina."],
-  ["📱","Acesso pelo celular","Use o sistema pelo computador ou celular, direto pelo navegador."],
+  ["👤","Clientes e veículos","Cadastre clientes e veículos com telefone, placa, modelo, ano e quilometragem."],
+  ["▤","Orçamentos em PDF","Crie orçamentos profissionais e envie por WhatsApp."],
+  ["🔧","Ordens de serviço","Controle cada etapa do serviço até a entrega."],
+  ["⬢","Estoque e compras","Gerencie peças, alertas de estoque e histórico."],
+  ["▥","Financeiro completo","Acompanhe entradas, saídas e resultados da oficina."],
+  ["▣","Relatórios e indicadores","Veja o desempenho da oficina com informações simples."],
 ];
 
 const steps = [
@@ -23,66 +23,39 @@ export default function Home() {
       <style>{`
         *{box-sizing:border-box}
         html{scroll-behavior:smooth}
-        .c10-wrap{max-width:1180px;margin:0 auto;padding:0 22px}
-        .c10-nav{height:74px;display:flex;align-items:center;justify-content:space-between}
-        .c10-links{display:flex;gap:28px;align-items:center}
-        .c10-links a{color:#172033;text-decoration:none;font-size:14px;font-weight:700}
-        .c10-hero{background:linear-gradient(135deg,#111c30 0%,#263751 100%);color:#fff}
-        .c10-hero-grid{min-height:610px;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:40px;padding:70px 0}
-        .c10-kicker{display:inline-block;color:#f59b32;font-size:13px;font-weight:900;letter-spacing:.08em}
-        .c10-hero h1{font-size:clamp(42px,6vw,68px);line-height:1.02;margin:16px 0}
-        .c10-hero h1 span{color:#f59b32}
-        .c10-hero p{font-size:19px;line-height:1.6;color:#dce3ec;max-width:650px}
-        .c10-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 24px;border-radius:9px;text-decoration:none;font-weight:800;font-size:16px}
-        .c10-primary{background:#f59b32;color:#fff}
-        .c10-secondary{border:1px solid #718096;color:#fff;margin-left:10px}
-        .c10-pills{display:flex;gap:22px;margin-top:22px;flex-wrap:wrap;color:#cbd5e1;font-size:13px}
-        .c10-pills span:before{content:"✓";color:#f59b32;font-weight:900;margin-right:7px}
-        .c10-visual{background:linear-gradient(145deg,#f9fafc,#dfe6ee);border-radius:24px;padding:18px;box-shadow:0 25px 60px rgba(0,0,0,.28)}
-        .c10-window{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(23,32,51,.18)}
-        .c10-window-top{height:44px;background:#172033;color:#fff;display:flex;align-items:center;padding:0 16px;font-weight:800}
-        .c10-window-body{display:grid;grid-template-columns:150px 1fr;min-height:330px}
-        .c10-side{background:#172033;color:#fff;padding:14px}
-        .c10-side div{padding:9px 6px;color:#d9e0e9;font-size:12px}
-        .c10-side .on{background:#2a3850;border-radius:6px;color:#fff}
-        .c10-dash{padding:16px;background:#f7f9fc}
-        .c10-statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-        .c10-stat{background:#fff;border:1px solid #e5e9ef;border-radius:8px;padding:10px}
-        .c10-stat small{color:#697586;font-size:9px}.c10-stat b{display:block;font-size:16px;margin-top:5px}
-        .c10-table{margin-top:10px;background:#fff;border:1px solid #e5e9ef;border-radius:8px;padding:10px}
-        .c10-row{display:grid;grid-template-columns:1.2fr 1fr .7fr;gap:8px;padding:8px 0;border-bottom:1px solid #eef1f4;font-size:10px}
-        .c10-row:last-child{border-bottom:0}
-        .c10-modules{background:#fff;padding:18px 0;box-shadow:0 4px 18px rgba(23,32,51,.06)}
-        .c10-module-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
-        .c10-module{padding:18px 10px;text-align:center;border:1px solid #e8edf3;border-radius:12px;background:#fff}
-        .c10-module .ico{font-size:26px}.c10-module b{display:block;margin-top:8px;font-size:13px}
-        .c10-section{padding:85px 0}
-        .c10-eyebrow{color:#f59b32;font-size:12px;font-weight:900;letter-spacing:.08em}
-        .c10-title{font-size:40px;line-height:1.1;margin:10px 0 14px}
-        .c10-sub{color:#687386;line-height:1.65;max-width:650px}
-        .c10-feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:35px}
-        .c10-feature{background:#fff;border:1px solid #e7ebf0;border-radius:14px;padding:22px;display:flex;gap:15px}
-        .c10-feature .ico{font-size:25px}.c10-feature h3{margin:0 0 7px;font-size:18px}.c10-feature p{margin:0;color:#687386;line-height:1.5;font-size:14px}
-        .c10-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:35px}
-        .c10-step{background:#172033;color:#fff;border-radius:14px;padding:28px}
-        .c10-step .num{color:#f59b32;font-weight:900;font-size:13px}.c10-step h3{margin:10px 0 6px}.c10-step p{color:#cbd5e1;margin:0;line-height:1.5}
-        .c10-price{background:#fff;border:1px solid #e4e9ef;border-radius:18px;padding:30px;max-width:560px;margin:30px auto 0;box-shadow:0 18px 45px rgba(23,32,51,.08)}
-        .c10-price-label{color:#687386;font-size:13px;font-weight:800}.c10-price h3{font-size:22px;margin:10px 0}.c10-price strong{font-size:46px}.c10-price ul{list-style:none;padding:0;margin:22px 0}.c10-price li{padding:8px 0;color:#344054}.c10-price li:before{content:"✓";color:#f59b32;font-weight:900;margin-right:8px}
-        .c10-faq{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px}
-        .c10-faq-item{background:#fff;border:1px solid #e7ebf0;border-radius:12px;padding:20px}.c10-faq-item b{display:block;margin-bottom:8px}.c10-faq-item p{margin:0;color:#687386;line-height:1.5;font-size:14px}
-        .c10-cta{background:#111c30;color:#fff;text-align:center;padding:70px 22px}.c10-cta h2{font-size:40px;margin:0 0 12px}.c10-cta p{color:#cbd5e1;margin-bottom:25px}
-        .c10-footer{background:#0c1525;color:#9ba8ba;padding:22px;text-align:center;font-size:12px}
-        @media(max-width:800px){
-          .c10-links{display:none}.c10-hero-grid{grid-template-columns:1fr;padding:52px 0}.c10-visual{order:2}.c10-hero h1{font-size:43px}.c10-module-grid{grid-template-columns:repeat(3,1fr)}.c10-feature-grid,.c10-faq{grid-template-columns:1fr}.c10-steps{grid-template-columns:1fr}.c10-section{padding:58px 0}.c10-title{font-size:32px}.c10-window-body{grid-template-columns:105px 1fr}.c10-side div{font-size:10px}.c10-statgrid{grid-template-columns:1fr 1fr}.c10-secondary{margin-left:0;margin-top:10px}.c10-actions{display:flex;flex-direction:column;align-items:flex-start;gap:0}
-        }
-        @media(max-width:480px){.c10-module-grid{grid-template-columns:repeat(2,1fr)}.c10-window-body{min-height:270px}.c10-side{display:none}.c10-window-body{display:block}.c10-dash{min-height:270px}.c10-btn{width:100%}}
+        body{margin:0}
+        .c10-wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+        .c10-nav{height:72px;display:flex;align-items:center;justify-content:space-between}
+        .c10-links{display:flex;gap:26px;align-items:center}.c10-links a{color:#172033;text-decoration:none;font-size:13px;font-weight:800}
+        .c10-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 22px;border-radius:8px;text-decoration:none;font-weight:900;font-size:15px}
+        .c10-primary{background:#f59b32;color:#fff}.c10-secondary{border:1px solid #718096;color:#fff;background:transparent}
+        .c10-hero{color:#fff;background:#111d31;position:relative;overflow:hidden}
+        .c10-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,20,35,.98) 0%,rgba(10,20,35,.9) 42%,rgba(10,20,35,.35) 100%),url("https://images.unsplash.com/photo-1711386689622-1cda23e10217?auto=format&fit=crop&fm=jpg&q=82&w=2200") center/cover no-repeat}
+        .c10-hero-grid{position:relative;min-height:520px;display:grid;grid-template-columns:1fr 1.05fr;align-items:center;gap:40px;padding:62px 0}
+        .c10-kicker,.c10-eyebrow{color:#f59b32;font-size:12px;font-weight:900;letter-spacing:.08em}.c10-hero h1{font-size:clamp(42px,6vw,67px);line-height:1.02;margin:14px 0}.c10-hero h1 span{color:#f59b32}.c10-hero p{font-size:17px;line-height:1.55;color:#e3e9f1;max-width:610px}
+        .c10-actions{display:flex;gap:10px;margin-top:24px}.c10-pills{display:flex;gap:20px;flex-wrap:wrap;margin-top:20px;color:#d8e0ea;font-size:11px}.c10-pills span:before{content:"✓";color:#f59b32;font-weight:900;margin-right:6px}
+        .c10-hero-photo{min-height:390px;border-radius:20px;background:linear-gradient(180deg,transparent 50%,rgba(9,17,30,.75)),url("https://images.unsplash.com/photo-1711386689622-1cda23e10217?auto=format&fit=crop&fm=jpg&q=82&w=1600") center/cover;box-shadow:0 25px 70px rgba(0,0,0,.32);position:relative}
+        .c10-quote{position:absolute;right:20px;top:30px;max-width:180px;font-size:16px;font-weight:900;font-style:italic;text-align:right}.c10-checks{position:absolute;right:18px;bottom:18px;background:rgba(17,32,51,.88);border-radius:12px;padding:13px;width:190px}.c10-checks div{font-size:11px;margin:7px 0}.c10-checks b{color:#f59b32;margin-right:5px}
+        .c10-modules{background:#fff;padding:14px 0;box-shadow:0 5px 20px rgba(0,0,0,.07)}.c10-module-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.c10-module{text-align:center;padding:16px 8px;border-right:1px solid #e8edf3}.c10-module:last-child{border:0}.c10-module .ico{font-size:25px}.c10-module b{display:block;margin-top:6px;font-size:12px}
+        .c10-section{padding:76px 0}.c10-title{font-size:39px;line-height:1.08;margin:8px 0 12px}.c10-sub{color:#687386;line-height:1.6;max-width:650px}.c10-dark{background:#111d31;color:#fff}.c10-dark .c10-sub{color:#d5dde8}
+        .c10-split{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center}.c10-feature-list{margin-top:24px}.c10-feature-list div{margin:11px 0;font-size:14px}.c10-feature-list b{display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center;background:#f59b32;color:#fff;border-radius:50%;margin-right:8px;font-size:12px}
+        .c10-dashboard{background:#f5f7fa;border-radius:16px;padding:13px;box-shadow:0 22px 55px rgba(0,0,0,.22)}.c10-window{background:#fff;border-radius:12px;overflow:hidden}.c10-window-top{height:40px;background:#172033;color:#fff;padding:0 13px;display:flex;align-items:center;font-weight:900;font-size:12px}.c10-window-body{display:grid;grid-template-columns:120px 1fr;min-height:300px}.c10-side{background:#172033;color:#fff;padding:10px}.c10-side div{font-size:10px;padding:8px 5px;color:#cbd5e1}.c10-side .on{background:#2a3850;border-radius:5px;color:#fff}.c10-dash{padding:12px}.c10-statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.c10-stat{background:#fff;border:1px solid #e3e8ee;border-radius:7px;padding:8px}.c10-stat small{font-size:8px;color:#687386}.c10-stat b{display:block;font-size:15px;margin-top:4px}.c10-table{margin-top:9px;background:#fff;border:1px solid #e3e8ee;border-radius:7px;padding:9px}.c10-row{display:grid;grid-template-columns:1.1fr 1fr .8fr;gap:5px;padding:7px 0;border-bottom:1px solid #eef1f4;font-size:9px}.c10-row:last-child{border:0}
+        .c10-devices{display:flex;align-items:end;justify-content:center;gap:12px;margin-top:24px}.c10-device{background:#111d31;border:7px solid #e7ebef;border-radius:12px;padding:7px;color:#fff;box-shadow:0 15px 30px rgba(0,0,0,.15)}.c10-device.phone{width:72px;height:135px}.c10-device.laptop{width:250px;height:155px}.c10-device.tablet{width:130px;height:165px}.c10-device .screen{height:100%;background:linear-gradient(145deg,#172033,#34465f);border-radius:5px;padding:10px;font-size:8px}.c10-device .screen b{display:block;color:#f59b32;font-size:12px;margin-bottom:10px}
+        .c10-feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}.c10-feature{padding:18px;background:#fff;border:1px solid #e7ebf0;border-radius:12px}.c10-feature .ico{font-size:23px}.c10-feature h3{margin:7px 0 5px;font-size:16px}.c10-feature p{margin:0;color:#687386;font-size:13px;line-height:1.45}
+        .c10-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}.c10-step{background:#172033;color:#fff;border-radius:12px;padding:24px}.c10-step .num{color:#f59b32;font-weight:900;font-size:12px}.c10-step h3{margin:9px 0 5px}.c10-step p{margin:0;color:#cbd5e1;font-size:13px;line-height:1.5}
+        .c10-price-wrap{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:20px;align-items:center;margin-top:30px}.c10-price-side{background:#fff;border:1px solid #e5eaf0;border-radius:12px;padding:22px}.c10-price{background:#fff;border:1px solid #e5eaf0;border-radius:14px;padding:25px;box-shadow:0 15px 40px rgba(23,32,51,.09)}.c10-price strong{font-size:43px}.c10-price ul{list-style:none;padding:0;margin:17px 0;text-align:left}.c10-price li{padding:6px 0;font-size:13px}.c10-price li:before{content:"✓";color:#f59b32;font-weight:900;margin-right:7px}
+        .c10-faq{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:25px}.c10-faq-item{background:#fff;border:1px solid #e5eaf0;border-radius:10px;padding:18px}.c10-faq-item b{font-size:14px}.c10-faq-item p{margin:7px 0 0;color:#687386;font-size:13px;line-height:1.45}
+        .c10-cta{background:#111d31;color:#fff;padding:55px 24px;text-align:center}.c10-cta h2{font-size:38px;margin:0 0 10px}.c10-cta p{color:#cbd5e1;margin-bottom:22px}.c10-footer{background:#0b1423;color:#9ba8ba;text-align:center;padding:20px;font-size:11px}
+        .c10-wa{position:fixed;right:18px;bottom:18px;width:58px;height:58px;border-radius:50%;background:#16a34a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;text-decoration:none;box-shadow:0 8px 25px rgba(0,0,0,.25);z-index:60}
+        @media(max-width:850px){.c10-links{display:none}.c10-hero-grid,.c10-split{grid-template-columns:1fr}.c10-hero-grid{padding:46px 0}.c10-hero-photo{min-height:330px}.c10-module-grid{grid-template-columns:repeat(3,1fr)}.c10-feature-grid{grid-template-columns:1fr 1fr}.c10-price-wrap{grid-template-columns:1fr}.c10-price-side{display:none}.c10-devices{flex-wrap:wrap}.c10-laptop{order:1}}
+        @media(max-width:520px){.c10-wrap{padding:0 16px}.c10-actions{flex-direction:column}.c10-btn{width:100%}.c10-module-grid{grid-template-columns:repeat(2,1fr)}.c10-module{border-bottom:1px solid #e8edf3}.c10-feature-grid,.c10-faq,.c10-steps{grid-template-columns:1fr}.c10-hero h1{font-size:43px}.c10-title{font-size:31px}.c10-hero-photo{min-height:290px}.c10-quote{font-size:13px;max-width:145px}.c10-checks{width:155px}.c10-window-body{grid-template-columns:90px 1fr}.c10-side div{font-size:8px}.c10-device.laptop{width:210px;height:135px}.c10-device.tablet{width:105px;height:135px}}
       `}</style>
 
       <header style={{background:"#fff",borderBottom:"1px solid #e7ebf0",position:"sticky",top:0,zIndex:50}}>
         <div className="c10-wrap c10-nav">
-          <div style={{fontWeight:900,fontSize:22}}>CHAVE <span style={{background:"#f59b32",color:"#fff",padding:"6px 9px",borderRadius:8}}>10</span><small style={{display:"block",fontSize:8,color:"#687386",letterSpacing:".08em",marginTop:3}}>GESTÃO DE OFICINA</small></div>
-          <nav className="c10-links"><a href="#funcionalidades">Funcionalidades</a><a href="#como-funciona">Como funciona</a><a href="#plano">Plano</a><a href="#duvidas">Dúvidas</a></nav>
-          <div style={{display:"flex",gap:8}}><a className="c10-btn" style={{padding:"10px 15px",fontSize:14,color:"#172033",background:"#f2f4f7"}} href="/login">Entrar</a><a className="c10-btn c10-primary" style={{padding:"10px 15px",fontSize:14}} href={MERCADO_PAGO_URL}>Começar agora →</a></div>
+          <div style={{fontWeight:900,fontSize:20}}>CHAVE <span style={{background:"#f59b32",color:"#fff",padding:"5px 8px",borderRadius:7}}>10</span><small style={{display:"block",fontSize:7,color:"#687386",letterSpacing:".08em",marginTop:2}}>GESTÃO DE OFICINA</small></div>
+          <nav className="c10-links"><a href="#funcionalidades">Funcionalidades</a><a href="#como-funciona">Como funciona</a><a href="#plano">Planos</a><a href="#depoimentos">Depoimentos</a><a href="#duvidas">Dúvidas</a></nav>
+          <div style={{display:"flex",gap:8}}><a className="c10-btn" style={{padding:"10px 14px",fontSize:13,color:"#172033",background:"#f2f4f7"}} href="/login">Entrar</a><a className="c10-btn c10-primary" style={{padding:"10px 14px",fontSize:13}} href={MERCADO_PAGO_URL}>Começar agora →</a></div>
         </div>
       </header>
 
@@ -90,52 +63,33 @@ export default function Home() {
         <div className="c10-wrap c10-hero-grid">
           <div>
             <div className="c10-kicker">SISTEMA DE GESTÃO PARA OFICINAS MECÂNICAS</div>
-            <h1>Sua oficina mais <span>organizada</span>, produtiva e sob controle.</h1>
-            <p>Centralize clientes, veículos, orçamentos, ordens de serviço, estoque e financeiro em um único sistema simples de usar.</p>
-            <div className="c10-actions" style={{marginTop:26}}><a className="c10-btn c10-primary" href={MERCADO_PAGO_URL}>Começar agora →</a><a className="c10-btn c10-secondary" href="#funcionalidades">Conhecer funcionalidades</a></div>
-            <div className="c10-pills"><span>Sem instalação</span><span>Acesso pelo celular</span><span>Pagamento via Mercado Pago</span></div>
+            <h1>Sua oficina mais <span>organizada, lucrativa</span> e em um só lugar.</h1>
+            <p>Controle clientes, veículos, orçamentos, ordens de serviço, estoque e financeiro de forma simples, rápida e segura.</p>
+            <div className="c10-actions"><a className="c10-btn c10-primary" href={MERCADO_PAGO_URL}>Começar agora →</a><a className="c10-btn c10-secondary" href="#como-funciona">▷ Ver como funciona</a></div>
+            <div className="c10-pills"><span>Sem instalação</span><span>Acesso pelo celular, computador, tablet e notebook</span><span>Pagamento via Mercado Pago</span><span>Suporte em português</span></div>
           </div>
-          <div className="c10-visual">
-            <div className="c10-window">
-              <div className="c10-window-top">CHAVE <span style={{background:"#f59b32",padding:"3px 6px",borderRadius:5,marginLeft:5}}>10</span><span style={{marginLeft:"auto",fontSize:11,fontWeight:400}}>Painel da oficina</span></div>
-              <div className="c10-window-body">
-                <div className="c10-side"><div className="on">▦ Dashboard</div><div>♙ Clientes</div><div>▱ Veículos</div><div>▤ Orçamentos</div><div>⚙ Ordens de serviço</div><div>▦ Estoque</div><div>💰 Financeiro</div></div>
-                <div className="c10-dash"><div className="c10-statgrid"><div className="c10-stat"><small>OS em andamento</small><b>8</b></div><div className="c10-stat"><small>Orçamentos</small><b>12</b></div><div className="c10-stat"><small>Clientes</small><b>25</b></div></div><div className="c10-table"><b style={{fontSize:12}}>Ordens de serviço</b><div className="c10-row"><b>OS-00124</b><span>Cliente</span><span>Em andamento</span></div><div className="c10-row"><b>OS-00123</b><span>Cliente</span><span>Concluída</span></div><div className="c10-row"><b>OS-00122</b><span>Cliente</span><span>Aberta</span></div></div><div className="c10-table"><b style={{fontSize:12}}>Controle financeiro</b><div style={{fontSize:20,fontWeight:900,marginTop:8}}>R$ 12.450,00</div></div></div>
-              </div>
-            </div>
-          </div>
+          <div className="c10-hero-photo"><div className="c10-quote">“Mais tempo para o que realmente importa.”</div><div className="c10-checks"><div><b>✓</b>Mais controle</div><div><b>✓</b>Mais organização</div><div><b>✓</b>Mais lucro</div><div><b>✓</b>Mais tempo para você</div></div></div>
         </div>
       </section>
 
       <section className="c10-modules"><div className="c10-wrap c10-module-grid">{features.map(([icon,title])=><div className="c10-module" key={title}><div className="ico">{icon}</div><b>{title}</b></div>)}</div></section>
 
-      <section className="c10-section" id="funcionalidades"><div className="c10-wrap">
-        <div className="c10-eyebrow">FUNCIONALIDADES</div><h2 className="c10-title">Tudo que sua oficina precisa, sem complicação.</h2><p className="c10-sub">Organize a rotina da oficina desde o cadastro do veículo até o fechamento da ordem de serviço e o acompanhamento financeiro.</p>
-        <div className="c10-feature-grid">{features.map(([icon,title,desc])=><div className="c10-feature" key={title}><div className="ico">{icon}</div><div><h3>{title}</h3><p>{desc}</p></div></div>)}</div>
+      <section className="c10-section c10-dark" id="funcionalidades"><div className="c10-wrap c10-split">
+        <div><div className="c10-eyebrow">SISTEMA COMPLETO</div><h2 className="c10-title">Tudo que sua oficina precisa, sem complicação.</h2><p className="c10-sub">O Chave 10 foi feito para o dia a dia da oficina mecânica, com foco em produtividade, organização e lucro.</p><div className="c10-feature-list"><div><b>✓</b>Interface simples e intuitiva</div><div><b>✓</b>Funciona em qualquer dispositivo</div><div><b>✓</b>Dados seguros na nuvem</div><div><b>✓</b>Suporte em português</div><div><b>✓</b>Atualizações constantes</div><div><b>✓</b>Ideal para oficinas de todos os tamanhos</div></div></div>
+        <div className="c10-dashboard"><div className="c10-window"><div className="c10-window-top">CHAVE 10 <span style={{marginLeft:"auto",fontWeight:400}}>Visão Geral</span></div><div className="c10-window-body"><div className="c10-side"><div className="on">Dashboard</div><div>Clientes</div><div>Veículos</div><div>Orçamentos</div><div>Ordens</div><div>Estoque</div><div>Financeiro</div></div><div className="c10-dash"><div className="c10-statgrid"><div className="c10-stat"><small>OS em andamento</small><b>12</b></div><div className="c10-stat"><small>Orçamentos</small><b>8</b></div><div className="c10-stat"><small>Financeiro</small><b>R$ 12.450</b></div></div><div className="c10-table"><b style={{fontSize:11}}>Ordens de Serviço</b><div className="c10-row"><b>OS 0012</b><span>João Silva</span><span>Em andamento</span></div><div className="c10-row"><b>OS 0011</b><span>Maria Souza</span><span>Concluída</span></div><div className="c10-row"><b>OS 0010</b><span>Carlos Lima</span><span>Aberta</span></div></div><div className="c10-table"><b style={{fontSize:11}}>Orçamentos Recentes</b><div style={{fontSize:18,fontWeight:900,marginTop:8}}>R$ 8.920</div></div></div></div></div></div>
       </div></section>
 
-      <section className="c10-section" id="como-funciona" style={{background:"#fff"}}><div className="c10-wrap">
-        <div className="c10-eyebrow">COMO FUNCIONA</div><h2 className="c10-title">Uma rotina mais simples para sua oficina.</h2><p className="c10-sub">O Chave 10 conecta as principais etapas da gestão em um fluxo único.</p>
-        <div className="c10-steps">{steps.map(([num,title,desc])=><div className="c10-step" key={num}><div className="num">{num}</div><h3>{title}</h3><p>{desc}</p></div>)}</div>
+      <section className="c10-section" id="como-funciona"><div className="c10-wrap c10-split">
+        <div><div className="c10-eyebrow">LIBERDADE PARA GERENCIAR</div><h2 className="c10-title">Acesse de onde estiver.</h2><p className="c10-sub">O Chave 10 funciona em qualquer dispositivo com internet. Use no celular, notebook, computador ou tablet e tenha sua oficina sempre na palma da sua mão.</p><div className="c10-devices"><div className="c10-device phone"><div className="screen"><b>10</b>Visão Geral</div></div><div className="c10-device laptop"><div className="screen"><b>CHAVE 10</b>Ordens · Clientes · Financeiro</div></div><div className="c10-device tablet"><div className="screen"><b>CHAVE 10</b>Estoque</div></div></div></div>
+        <div><div className="c10-feature-grid">{features.slice(0,3).map(([icon,title,desc])=><div className="c10-feature" key={title}><div className="ico">{icon}</div><h3>{title}</h3><p>{desc}</p></div>)}</div></div>
       </div></section>
 
-      <section className="c10-section" id="plano"><div className="c10-wrap" style={{textAlign:"center"}}>
-        <div className="c10-eyebrow">PLANO ÚNICO</div><h2 className="c10-title">Tudo em um só plano.</h2><p className="c10-sub" style={{margin:"0 auto"}}>Sem escolher módulos. Você tem acesso aos recursos disponíveis do Chave 10 por uma mensalidade única.</p>
-        <div className="c10-price"><div className="c10-price-label">CHAVE 10</div><h3>Gestão completa para sua oficina</h3><div><strong>R$ 29,99</strong> <span>/ mês</span></div><ul style={{textAlign:"left"}}><li>Clientes e veículos</li><li>Orçamentos e geração de PDF</li><li>Ordens de serviço</li><li>Estoque e movimentações</li><li>Financeiro</li><li>Acesso pelo navegador</li></ul><a className="c10-btn c10-primary" style={{width:"100%"}} href={MERCADO_PAGO_URL}>Assinar por R$ 29,99/mês →</a><div style={{fontSize:12,color:"#687386",marginTop:12}}>Pagamento processado pelo Mercado Pago.</div></div>
-      </div></section>
+      <section className="c10-section" id="plano" style={{background:"#f6f8fb"}}><div className="c10-wrap" style={{textAlign:"center"}}><div className="c10-eyebrow">PLANO ÚNICO</div><h2 className="c10-title">Preço justo. Sem complicação.</h2><p className="c10-sub" style={{margin:"0 auto"}}>Todas as funcionalidades por um valor acessível. Sem taxa de instalação. Sem fidelidade.</p><div className="c10-price-wrap"><div className="c10-price-side"><b>🛡️ Seus dados protegidos</b><p style={{color:"#687386",fontSize:12,lineHeight:1.5}}>Utilizamos tecnologia para ajudar a garantir a segurança das suas informações.</p></div><div className="c10-price"><div style={{fontWeight:900}}>Chave 10</div><div><strong>R$ 29,99</strong> <span>/ mês</span></div><ul><li>Todos os módulos incluídos</li><li>Acesso em todos os dispositivos</li><li>Suporte via WhatsApp</li><li>Ativação rápida</li><li>Sem taxa de instalação</li><li>Sem fidelidade</li></ul><a className="c10-btn c10-primary" style={{width:"100%"}} href={MERCADO_PAGO_URL}>Começar agora →</a><div style={{fontSize:11,color:"#687386",marginTop:10}}>Pagamento processado pelo Mercado Pago.</div></div><div className="c10-price-side"><b>🤝 Pagamento seguro</b><p style={{color:"#687386",fontSize:12,lineHeight:1.5}}>Pagamento via Mercado Pago, com as opções disponíveis no checkout.</p><b>◷ Ativação rápida</b><p style={{color:"#687386",fontSize:12,lineHeight:1.5}}>Comece a usar o sistema após a ativação da assinatura.</p></div></div></div></section>
 
-      <section className="c10-section" id="duvidas" style={{paddingTop:20}}><div className="c10-wrap">
-        <div className="c10-eyebrow">DÚVIDAS</div><h2 className="c10-title">Perguntas frequentes.</h2>
-        <div className="c10-faq">
-          <div className="c10-faq-item"><b>Preciso instalar algum programa?</b><p>Não. O Chave 10 funciona pelo navegador, no computador ou celular.</p></div>
-          <div className="c10-faq-item"><b>O que está incluído no plano?</b><p>Clientes, veículos, orçamentos, PDF, ordens de serviço, estoque e financeiro.</p></div>
-          <div className="c10-faq-item"><b>Como faço para assinar?</b><p>Toque em “Começar agora” ou “Assinar” e continue o pagamento pelo Mercado Pago.</p></div>
-          <div className="c10-faq-item"><b>Posso acessar pelo celular?</b><p>Sim. O sistema foi estruturado para funcionar também em telas menores.</p></div>
-        </div>
-      </div></section>
+      <section className="c10-section" id="duvidas"><div className="c10-wrap"><div className="c10-eyebrow">DÚVIDAS FREQUENTES</div><h2 className="c10-title">Perguntas frequentes.</h2><div className="c10-faq"><div className="c10-faq-item"><b>Preciso instalar algum programa?</b><p>Não. O Chave 10 funciona pelo navegador e não exige instalação.</p></div><div className="c10-faq-item"><b>Posso usar em mais de um computador?</b><p>Sim. Você pode acessar de qualquer lugar, em quantos dispositivos precisar.</p></div><div className="c10-faq-item"><b>Como é o pagamento?</b><p>O pagamento é feito pelo Mercado Pago, com as opções disponíveis no checkout.</p></div><div className="c10-faq-item"><b>O que está incluso no plano?</b><p>Clientes, veículos, orçamentos, ordens de serviço, estoque e financeiro.</p></div></div></div></section>
 
-      <section className="c10-cta"><h2>Pronto para organizar sua oficina?</h2><p>Comece agora com o Chave 10 e centralize a gestão da sua oficina.</p><a className="c10-btn c10-primary" href={MERCADO_PAGO_URL}>Começar agora →</a></section>
-      <footer className="c10-footer">© 2026 Chave 10 · Gestão de Oficina · <a href="/login" style={{color:"#cbd5e1"}}>Entrar</a></footer>
+      <section className="c10-cta"><h2>Pronto para levar sua oficina a um novo nível?</h2><p>Comece agora e veja a diferença na sua rotina.</p><a className="c10-btn c10-primary" href={MERCADO_PAGO_URL}>Começar agora →</a></section>
+      <footer className="c10-footer">© 2026 Chave 10. Todos os direitos reservados. · <a href="/login" style={{color:"#cbd5e1"}}>Entrar</a></footer><a className="c10-wa" href="https://wa.me/" aria-label="WhatsApp">◉</a>
     </main>
   );
 }
