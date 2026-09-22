@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../../lib/supabase";
 import { jsPDF } from "jspdf";
 
 type Tab="dashboard"|"clientes"|"veiculos"|"orcamentos"|"os"|"historico";
