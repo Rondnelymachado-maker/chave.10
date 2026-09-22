@@ -32,3 +32,16 @@
  .welcome h2{font-size:22px!important}
  .dashboardCards{grid-template-columns:1fr!important}
 }
+
+/* FINAL MOBILE ORIENTATION FIX */
+@media (max-width:650px){
+ .appShell{display:flex!important;flex-direction:row!important;align-items:stretch!important;width:100%!important;min-height:100vh!important;overflow-x:hidden!important}
+ .appSidebar{display:flex!important;visibility:visible!important;position:relative!important;left:auto!important;top:auto!important;width:150px!important;min-width:150px!important;max-width:150px!important;height:100vh!important;min-height:100vh!important;flex:0 0 150px!important;z-index:30!important;overflow-y:auto!important}
+ .appContent{display:block!important;flex:1 1 auto!important;width:calc(100% - 150px)!important;min-width:0!important}
+ .mobileNav{display:none!important}
+ .appHeader{padding:12px 10px!important;gap:6px!important}
+ .appHeader h1{font-size:20px!important}
+ .appHeader>button{font-size:10px!important;padding:8px 9px!important}
+ .pageContent{padding:10px!important}
+ .appSidebar .brand{font-size:14px!important}.appSidebar .brand small{font-size:9px!important}.appSidebar .nav{font-size:11px!important;padding:9px 4px!important}
+}
