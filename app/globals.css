@@ -7,7 +7,7 @@
 /* Mobile UI refinement */
 @media(max-width:650px){
  .appShell{display:block!important;min-height:100vh!important;overflow-x:hidden!important}
- .appSidebar{display:none!important}
+ .appSidebar{display:flex!important;width:170px!important;min-width:170px!important;flex:0 0 170px!important;padding:12px!important;box-sizing:border-box!important;min-height:100vh!important}.appSidebar .nav{font-size:12px!important;padding:10px 6px!important;gap:7px!important;white-space:nowrap!important}.appSidebar .brand{font-size:16px!important;margin-bottom:16px!important}.appSidebar .sideBottom{font-size:10px!important;padding:10px 4px!important}.mobileNav{display:none!important}
  .appContent{width:100%!important;min-width:0!important}
  .appHeader{padding:14px 16px!important;min-height:72px!important;gap:10px!important;box-sizing:border-box!important;align-items:center!important}
  .appHeader>div:first-child{min-width:0!important}
