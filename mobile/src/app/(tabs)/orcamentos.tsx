@@ -9,7 +9,7 @@ type Product={id:string;description:string;quantity:number;unit_price:number};
 type Quote={id:string;number:string;client_id:string;vehicle_id:string|null;description:string|null;status:string;labor:number;parts:number;discount:number;total:number;created_at:string};
 type Item={product_id:string;quantity:string;include_price:boolean};
 
-const money=(v:string)=>{const n=Number(String(v||"").replace(/\\./g,"").replace(",","."));return Number.isFinite(n)?n:0};
+const money=(v:string)=>{const n=Number(String(v||"").replace(/\./g,"").replace(",","."));return Number.isFinite(n)?n:0};
 const brl=(n:number)=>`R$ ${Number(n||0).toLocaleString("pt-BR",{minimumFractionDigits:2})}`;
 
 export default function Orcamentos(){
