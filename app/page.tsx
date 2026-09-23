@@ -2,20 +2,51 @@
 
 const MERCADO_PAGO_URL = "https://mpago.la/18fhBWP";
 
-export default function Home() {
-  return (
-    <main style={{margin:0,padding:0,background:"#fff",position:"relative",lineHeight:0}}>
-      <div style={{position:"relative",width:"100%",maxWidth:1400,margin:"0 auto"}}>
-        <img
-          src="/11804D4D-7816-4B67-A3B8-4733DE7A9FDE.png"
-          alt="Chave 10 — Gestão de Oficina"
-          style={{display:"block",width:"100%",height:"auto"}}
-        />
-        <a href="/login" aria-label="Entrar" style={{position:"absolute",top:"1.5%",right:"15.5%",width:"12%",height:"4.5%",zIndex:5}} />
-        <a href={MERCADO_PAGO_URL} aria-label="Começar agora" style={{position:"absolute",top:"1.5%",right:"2%",width:"14%",height:"4.5%",zIndex:5}} />
-        <a href={MERCADO_PAGO_URL} aria-label="Assinar Chave 10" style={{position:"absolute",top:"68%",left:"38%",width:"24%",height:"6%",zIndex:5}} />
-        <a href={MERCADO_PAGO_URL} aria-label="Começar agora" style={{position:"absolute",top:"91%",right:"3%",width:"20%",height:"5%",zIndex:5}} />
+const features = [
+  ["👤","Clientes e veículos","Cadastre clientes e veículos com telefone, histórico e quilometragem."],
+  ["📄","Orçamentos em PDF","Crie orçamentos profissionais e envie pelo WhatsApp."],
+  ["🔧","Ordens de serviço (OS)","Controle todas as etapas do serviço."],
+  ["📦","Estoque e compras","Gerencie peças, alertas de estoque e histórico."],
+  ["📊","Financeiro completo","Acompanhe entradas, saídas, lucros e relatórios."],
+  ["▣","Relatórios e indicadores","Veja o desempenho da oficina em poucos cliques."],
+];
+
+function Panel({mobile=false}:{mobile?:boolean}) {
+  return <div className={mobile ? "screen mobile" : "screen"}>
+    <div className="screenTop"><b>CHAVE <i>10</i></b><span>Visão Geral</span></div>
+    <div className="screenBody">
+      {!mobile && <aside><strong>Dashboard</strong><span>Clientes</span><span>Veículos</span><span>Orçamentos</span><span>Ordens de Serviço</span><span>Estoque</span><span>Financeiro</span></aside>}
+      <div className="screenContent">
+        <div className="metrics"><div>OS em andamento<strong>12</strong></div><div>Orçamentos<strong>8</strong></div><div>Financeiro<strong>R$ 12.450</strong></div></div>
+        <div className="chart"><b>Ordens de Serviço</b><div className="rows"><span></span><span></span><span></span><span></span></div></div>
+        <div className="chart small"><b>Orçamentos recentes</b></div>
       </div>
-    </main>
-  );
+    </div>
+  </div>
+}
+
+export default function Home() {
+  return <main className="sales">
+    <style>{`
+      *{box-sizing:border-box}.sales{font-family:Arial,Helvetica,sans-serif;color:#172033;background:#f7f9fc;line-height:1.45}.sales a{text-decoration:none}
+      .nav{height:72px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 5%;position:sticky;top:0;z-index:20;border-bottom:1px solid #e7ebf2}.brand{font-size:25px;font-weight:900;letter-spacing:-1px}.brand i{font-style:normal;background:#f59b32;color:#fff;border-radius:9px;padding:7px 10px;margin-left:4px}.brand small{display:block;font-size:9px;letter-spacing:1.2px;color:#6d7890;margin-top:2px}.navlinks{display:flex;gap:26px;font-size:13px;font-weight:700}.navbtns{display:flex;gap:10px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 20px;border-radius:8px;font-weight:800}.btn.light{background:#f0f2f6;color:#172033}.btn.orange{background:#f59b32;color:#fff}
+      .hero{background:linear-gradient(110deg,#101b31 0%,#172b48 65%,#0f192c);color:#fff;padding:58px 5% 24px;position:relative;overflow:hidden}.heroGrid{max-width:1200px;margin:auto;display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:center}.eyebrow{color:#f59b32;font-weight:900;letter-spacing:1.5px;font-size:14px}.hero h1{font-size:48px;line-height:1.02;margin:12px 0 16px;letter-spacing:-1.8px}.hero h1 em{color:#f59b32;font-style:normal}.hero p{font-size:17px;color:#d9e0eb;max-width:590px}.heroActions{display:flex;gap:12px;margin:25px 0}.heroChecks{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:#dce3ed}.heroChecks b{color:#f59b32}.heroVisual{background:#eef2f7;border:9px solid #fff;border-radius:18px;padding:10px;box-shadow:0 20px 50px #0005;transform:rotate(1deg)}.screen{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 5px 20px #0001}.screenTop{height:48px;background:#182237;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px}.screenTop b{font-size:16px}.screenTop i{font-style:normal;background:#f59b32;border-radius:6px;padding:4px 6px}.screenBody{display:flex;min-height:270px}.screenBody aside{width:145px;background:#182237;color:#dce3ed;padding:15px;display:flex;flex-direction:column;gap:13px;font-size:11px}.screenBody aside strong{background:#30405b;padding:8px;border-radius:6px;color:#fff}.screenContent{padding:15px;flex:1;background:#f7f8fb}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.metrics div,.chart{background:#fff;border:1px solid #e0e5ed;border-radius:8px;padding:11px;color:#69758a;font-size:10px}.metrics strong{display:block;color:#172033;font-size:16px;margin-top:5px}.chart{margin-top:10px;height:95px}.chart.small{height:58px}.rows{display:flex;gap:6px;margin-top:12px}.rows span{height:7px;border-radius:5px;background:#dbe2ec;display:block;flex:1}
+      .featurebar{background:#fff;display:grid;grid-template-columns:repeat(6,1fr);max-width:1200px;margin:0 auto;padding:18px 0;border-bottom:1px solid #e5e9ef}.featurebar div{text-align:center;padding:8px;border-right:1px solid #e5e9ef;font-size:11px}.featurebar div:last-child{border:0}.featurebar b{display:block;font-size:24px;margin-bottom:5px}
+      .section{max-width:1200px;margin:auto;padding:70px 5%}.darkSection{max-width:none;background:#111d32;color:#fff}.sectionGrid{max-width:1200px;margin:auto;display:grid;grid-template-columns:1fr 1.1fr;gap:50px;align-items:center}.section h2{font-size:38px;line-height:1.08;margin:8px 0 15px}.section p{color:#68758a}.darkSection p{color:#d8e0eb}.checks{list-style:none;padding:0}.checks li{margin:10px 0}.checks li:before{content:"✓";display:inline-grid;place-items:center;width:22px;height:22px;background:#f59b32;color:#fff;border-radius:50%;font-weight:900;margin-right:8px}.deviceStage{position:relative;min-height:330px;display:flex;align-items:center;justify-content:center}.deviceStage .screen{width:90%;box-shadow:0 25px 60px #0006}.phone{position:absolute;right:0;bottom:0;width:18%;border:8px solid #fff;border-radius:22px;overflow:hidden;box-shadow:0 15px 35px #0005}.phone .screenBody{min-height:210px}.phone .screenTop{height:35px}
+      .devices{display:flex;justify-content:center;gap:30px;margin-top:30px}.device{background:#17243a;color:#fff;border:7px solid #e6ebf2;border-radius:16px;padding:18px;width:150px;height:110px;text-align:center;box-shadow:0 15px 35px #0002}.device:first-child{width:70px;height:145px}.device b{color:#f59b32;display:block;margin-bottom:8px}
+      .plan{background:#fff;border-radius:14px;padding:30px;max-width:360px;margin:auto;text-align:center;box-shadow:0 12px 35px #17203318;border:1px solid #e4e8ef}.price{font-size:42px;font-weight:900;margin:8px}.price small{font-size:15px;font-weight:600}.plan ul{text-align:left;line-height:1.9;color:#59657a;list-style:none;padding:0}.plan li:before{content:"✓ ";color:#f59b32;font-weight:900}
+      .faq{display:grid;grid-template-columns:1fr 1fr;gap:12px}.faq div{background:#fff;border:1px solid #e3e7ee;border-radius:9px;padding:18px}.faq b{display:flex;justify-content:space-between}
+      .footer{background:#111d32;color:#fff;padding:35px 5%;text-align:center}.wa{position:fixed;right:20px;bottom:20px;background:#20c66a;color:#fff;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:28px;box-shadow:0 8px 25px #0004;z-index:30}
+      @media(max-width:800px){.nav{height:auto;padding:13px 16px;gap:8px}.navlinks{display:none}.brand{font-size:21px}.navbtns .btn{padding:10px 12px}.hero{padding:38px 16px 25px}.heroGrid,.sectionGrid{grid-template-columns:1fr;gap:25px}.hero h1{font-size:40px}.heroVisual{transform:none}.featurebar{grid-template-columns:repeat(2,1fr);padding:10px 8px}.featurebar div{border-bottom:1px solid #e5e9ef}.section{padding:50px 20px}.section h2{font-size:31px}.faq{grid-template-columns:1fr}.deviceStage{min-height:270px}.wa{right:15px;bottom:15px}.heroActions .btn{flex:1}.heroChecks{gap:10px}}
+    `}</style>
+    <header className="nav"><a className="brand" href="/">CHAVE <i>10</i><small>GESTÃO DE OFICINA</small></a><nav className="navlinks"><a href="#funcionalidades">Funcionalidades</a><a href="#como-funciona">Como funciona</a><a href="#plano">Plano</a><a href="#duvidas">Dúvidas</a></nav><div className="navbtns"><a className="btn light" href="/login">Entrar</a><a className="btn orange" href={MERCADO_PAGO_URL}>Começar agora →</a></div></header>
+    <section className="hero"><div className="heroGrid"><div><div className="eyebrow">SISTEMA DE GESTÃO PARA OFICINAS MECÂNICAS</div><h1>Sua oficina mais <em>organizada, lucrativa</em> e em um só lugar.</h1><p>Controle clientes, veículos, orçamentos, ordens de serviço, estoque e financeiro de forma simples, rápida e segura.</p><div className="heroActions"><a className="btn orange" href={MERCADO_PAGO_URL}>Começar agora →</a><a className="btn light" href="#como-funciona">◉ Ver como funciona</a></div><div className="heroChecks"><span><b>✓</b> Sem instalação</span><span><b>✓</b> Acesso pelo celular, computador, tablet e notebook</span><span><b>✓</b> Pagamento via Mercado Pago</span><span><b>✓</b> Suporte em português</span></div></div><div className="heroVisual"><Panel/></div></div></section>
+    <section id="funcionalidades" className="featurebar">{features.map(([icon,title,desc])=><div key={title}><b>{icon}</b><strong>{title}</strong><small>{desc}</small></div>)}</section>
+    <section id="como-funciona" className="section darkSection"><div className="sectionGrid"><div><div className="eyebrow">SISTEMA COMPLETO</div><h2>Tudo que sua oficina precisa, sem complicação.</h2><p>O Chave 10 foi feito para o dia a dia da oficina mecânica, com foco em produtividade, organização e controle.</p><ul className="checks"><li>Interface simples e intuitiva</li><li>Funciona em qualquer dispositivo</li><li>Dados seguros na nuvem</li><li>Suporte em português</li><li>Atualizações constantes</li></ul></div><div className="deviceStage"><Panel/><div className="phone"><Panel mobile/></div></div></div></section>
+    <section className="section"><div className="sectionGrid"><div><div className="eyebrow">LIBERDADE PARA GERENCIAR</div><h2>Acesse de onde estiver.</h2><p>O Chave 10 funciona em qualquer dispositivo com internet. Use no celular, notebook, computador ou tablet e tenha sua oficina sempre na palma da sua mão.</p><div className="devices"><div className="device"><b>10</b>Celular</div><div className="device"><b>CHAVE 10</b>Computador</div><div className="device"><b>CHAVE 10</b>Notebook</div><div className="device"><b>CHAVE 10</b>Tablet</div></div></div><div className="deviceStage"><Panel/></div></div></section>
+    <section id="plano" className="section" style={{background:"#eef2f7"}}><div style={{textAlign:"center",marginBottom:28}}><div className="eyebrow">PLANO ÚNICO</div><h2>Preço justo. Sem complicação.</h2><p>Todas as funcionalidades por um valor acessível.</p></div><div className="plan"><h3>Chave 10</h3><div className="price">R$ 29,99 <small>/ mês</small></div><ul><li>Todos os módulos incluídos</li><li>Usuários ilimitados</li><li>Acesso em todos os dispositivos</li><li>Suporte em português</li><li>Cancelamento quando quiser</li></ul><a className="btn orange" style={{width:"100%"}} href={MERCADO_PAGO_URL}>Começar agora →</a></div></section>
+    <section id="duvidas" className="section"><div style={{textAlign:"center",marginBottom:25}}><div className="eyebrow">DÚVIDAS FREQUENTES</div><h2>Perguntas frequentes</h2></div><div className="faq"><div><b>Preciso instalar algum programa? <span>+</span></b><p>Não. O Chave 10 funciona online em qualquer dispositivo.</p></div><div><b>Posso usar em mais de um computador? <span>+</span></b><p>Sim. Você pode acessar de qualquer lugar.</p></div><div><b>Tem fidelidade? <span>+</span></b><p>Não. Você pode cancelar quando quiser.</p></div><div><b>Como é o pagamento? <span>+</span></b><p>O pagamento é feito via Mercado Pago.</p></div></div></section>
+    <footer className="footer"><h2>Pronto para levar sua oficina a um novo nível?</h2><a className="btn orange" href={MERCADO_PAGO_URL}>Começar agora →</a><p>© 2026 Chave 10. Todos os direitos reservados.</p></footer>
+    <a className="wa" href="/login" aria-label="WhatsApp">◔</a>
+  </main>;
 }
