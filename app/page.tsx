@@ -95,6 +95,7 @@ export default function Home() {
 
       <section className="c10-cta"><h2>Pronto para levar sua oficina a um novo nível?</h2><p>Comece agora e veja a diferença na sua rotina.</p><a className="c10-btn c10-primary" href={MERCADO_PAGO_URL}>Começar agora →</a></section>
       <footer className="c10-footer">© 2026 Chave 10. Todos os direitos reservados. · <a href="/login" style={{color:"#cbd5e1"}}>Entrar</a></footer>
+      </section>
     </main>
   );
 }
