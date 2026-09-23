@@ -19,7 +19,12 @@ const steps = [
 
 export default function Home() {
   return (
-    <main style={{minHeight:"100vh",fontFamily:"Arial,sans-serif",background:"#f6f8fb",color:"#172033"}}>
+    <main>
+      <section style={{background:"#111d31",padding:"0"}}>
+        <div style={{maxWidth:1280,margin:"0 auto"}}>
+          <img src="/chave10-vendas.jpg" alt="Como funciona o Chave 10 - gestão de oficina" style={{display:"block",width:"100%",height:"auto"}} />
+        </div>
+      </section> style={{minHeight:"100vh",fontFamily:"Arial,sans-serif",background:"#f6f8fb",color:"#172033"}}>
       <style>{`
         *{box-sizing:border-box}
         html{scroll-behavior:smooth}
