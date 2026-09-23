@@ -24,7 +24,7 @@ export default function Home() {
         <div style={{maxWidth:1280,margin:"0 auto"}}>
           <img src="/11804D4D-7816-4B67-A3B8-4733DE7A9FDE.png" alt="Como funciona o Chave 10 - gestão de oficina" style={{display:"block",width:"100%",height:"auto"}} />
         </div>
-      </section> style={{minHeight:"100vh",fontFamily:"Arial,sans-serif",background:"#f6f8fb",color:"#172033"}}>
+      </section><section style={{minHeight:"100vh",fontFamily:"Arial,sans-serif",background:"#f6f8fb",color:"#172033"}}>
       <style>{`
         *{box-sizing:border-box}
         html{scroll-behavior:smooth}
