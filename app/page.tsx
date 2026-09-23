@@ -59,6 +59,5 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}.sales{width:100%;overflow
 <section id="planos" className="planBand"><div className="planInner"><div><div className="eyebrow">PLANOS ACESSÍVEIS</div><h2 style={{margin:"5px 0"}}>Comece agora por apenas</h2><div className="price">R$ 29,99<span style={{fontSize:18}}>/mês</span></div><p>Sem instalação. Cancele quando quiser.</p></div><ul><li>Todas as funcionalidades</li><li>Suporte em português</li><li>Acesso pelo navegador</li><li>Sem fidelidade</li></ul><div style={{textAlign:"center"}}><a className="btn orange" href={MERCADO_PAGO_URL}>🚀 Quero começar agora →</a><p>Pagamento seguro via Mercado Pago</p></div></div></section>
 <section id="duvidas" className="featureTitle"><div className="eyebrow">DÚVIDAS</div><h2>Perguntas frequentes</h2><p>Precisa instalar? Não. O Chave 10 funciona online. Posso usar em mais de um computador? Sim. Como pago? Via Mercado Pago.</p></section>
 <footer className="footer"><h2>Pronto para levar sua oficina a um novo nível?</h2><a className="btn orange" href={MERCADO_PAGO_URL}>Começar agora →</a><p>© 2026 Chave 10. Todos os direitos reservados.</p></footer>
-<a className="wa" href="https://wa.me/" aria-label="WhatsApp">◔</a>
 </main>;
 }
