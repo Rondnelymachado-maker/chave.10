@@ -3,18 +3,18 @@
 const MERCADO_PAGO_URL="https://mpago.la/18fhBWP";
 
 const modules=[
-["👥","Clientes","Cadastro completo, histórico de serviços e contato rápido."],
-["🚗","Veículos","Controle de veículos por cliente, histórico e dados técnicos."],
-["📄","Orçamentos","Crie orçamentos profissionais em minutos e converta em OS."],
-["🔧","Ordens de Serviço","Gerencie todo o fluxo do serviço da entrada à entrega."],
-["📦","Estoque","Controle peças, alertas de estoque baixo e movimentações."],
-["💰","Financeiro","Contas a pagar e receber, fluxo de caixa e lançamentos."],
-["📊","Relatórios","Acompanhe resultados, produtividade e faturamento."],
-["📅","Agenda","Organize serviços e compromissos da equipe."],
-["👨‍🔧","Equipe","Cadastre mecânicos e acompanhe a produtividade."],
-["💬","Mensagens","Envie lembretes e atualizações para clientes."],
-["⚙️","Configurações","Personalize o sistema de acordo com sua oficina."],
-["☁️","Acesso em nuvem","Seus dados disponíveis em qualquer lugar."],
+["👥","Clientes","Cadastro completo e histórico de atendimento."],
+["🚗","Veículos","Veículos vinculados ao cliente e histórico."],
+["📄","Orçamentos em PDF","Orçamentos profissionais prontos para compartilhar."],
+["🔧","Ordens de Serviço","Controle do serviço da abertura à entrega."],
+["📦","Estoque","Entradas, saídas, peças e saldo em estoque."],
+["💰","Financeiro","Lançamentos financeiros gerados pelas OS."],
+["📲","WhatsApp","Compartilhe orçamentos em PDF pelo WhatsApp."],
+["📊","Dashboard","Visão geral da operação da oficina."],
+["🧾","Histórico","Consulte serviços e informações dos veículos."],
+["☁️","Acesso online","Use o sistema pela internet, sem instalação."],
+["📱","Responsivo","Celular, tablet, notebook e computador."],
+["🔐","Acesso protegido","Login e áreas internas separadas da página de vendas."],
 ];
 
 function DashboardMock({kind="desktop"}:{kind?:string}){
@@ -44,11 +44,11 @@ export default function Home(){
 @media(max-width:560px){.nav{padding:10px 14px}.logo{font-size:20px}.nav .btn{padding:10px 12px}.hero{padding:35px 16px 20px}.hero h1{font-size:35px}.hero p{font-size:15px}.heroDevices{height:275px}.heroDevices .laptop{width:42%}.heroDevices .tablet{width:33%}.heroDevices .phone{width:17%}.moduleGrid{grid-template-columns:repeat(2,1fr);padding-left:12px;padding-right:12px}.module{border-right:0}.deviceCards{grid-template-columns:1fr}.dark,.access{padding:50px 18px}.dark h2,.access h2{font-size:31px}}
 `}</style>
 <header className="nav"><a className="logo" href="/">CHAVE <i>10</i><small>GESTÃO DE OFICINA</small></a><nav className="navlinks"><a href="#funcionalidades">Funcionalidades</a><a href="#como-funciona">Como funciona</a><a href="#planos">Planos</a><a href="#duvidas">Dúvidas</a></nav><div><a className="btn light" href="/login">Entrar</a> <a className="btn orange" href={MERCADO_PAGO_URL}>Começar agora →</a></div></header>
-<section className="hero"><div className="heroGrid"><div><div className="eyebrow">SISTEMA COMPLETO DE GESTÃO PARA OFICINAS</div><h1>Sua oficina <em>mais organizada, lucrativa e eficiente.</em></h1><p>Controle clientes, veículos, orçamentos, ordens de serviço, estoque e financeiro em um só lugar.</p><div className="actions"><a className="btn orange" href={MERCADO_PAGO_URL}>🚀 Começar agora →</a><a className="btn light" href="#como-funciona">Ver como funciona</a></div><div className="checks"><span>Fácil de usar</span><span>Acesso em qualquer dispositivo</span><span>Suporte especializado</span></div></div><div className="heroDevices"><DashboardMock/><DashboardMock kind="laptop"/><DashboardMock kind="tablet"/><DashboardMock kind="phone"/></div></div></section>
+<section className="hero"><div className="heroGrid"><div><div className="eyebrow">SISTEMA COMPLETO DE GESTÃO PARA OFICINAS</div><h1>Sua oficina <em>mais organizada, lucrativa e em um só lugar.</em></h1><p>Controle clientes, veículos, orçamentos, ordens de serviço, estoque e financeiro em um só lugar, com uma interface simples e profissional.</p><div className="actions"><a className="btn orange" href={MERCADO_PAGO_URL}>🚀 Começar agora →</a><a className="btn light" href="#como-funciona">Ver como funciona</a></div><div className="checks"><span>Fácil de usar</span><span>Acesso em qualquer dispositivo</span><span>Gestão simples e profissional</span></div></div><div className="heroDevices"><DashboardMock/><DashboardMock kind="laptop"/><DashboardMock kind="tablet"/><DashboardMock kind="phone"/></div></div></section>
 <section id="funcionalidades"><div className="featureTitle"><div className="eyebrow">FUNCIONALIDADES</div><h2>Tudo que sua oficina precisa, em um só sistema.</h2><p>Ferramentas completas para você organizar, crescer e lucrar mais.</p></div><div className="moduleGrid">{modules.map(([icon,title,desc])=><article className="module" key={title}><div className="moduleIcon">{icon}</div><strong>{title}</strong><p>{desc}</p></article>)}</div></section>
 <section id="como-funciona" className="dark"><div className="darkGrid"><div><div className="eyebrow">SISTEMA COMPLETO</div><h2>Mais controle. Menos complicação.</h2><p>O Chave 10 centraliza a operação da oficina em uma interface simples, rápida e profissional.</p><ul className="tickList"><li>Interface simples e intuitiva</li><li>Funciona em qualquer dispositivo</li><li>Dados seguros na nuvem</li><li>Controle de peças e movimentações</li><li>Orçamentos, OS e histórico de veículos</li><li>Financeiro e relatórios</li><li>Suporte em português</li><li>Atualizações constantes</li></ul></div><div><DashboardMock/><div style={{display:"flex",gap:12,marginTop:12}}><DashboardMock kind="tablet"/><DashboardMock kind="phone"/></div></div></div></section>
 <section className="access"><div className="accessInner"><div className="eyebrow">ACESSO EM QUALQUER DISPOSITIVO</div><h2>Use no celular, tablet, notebook ou computador.</h2><p>O Chave 10 se adapta à sua rotina. Tenha sua oficina sempre com você.</p><div className="deviceCards"><div className="deviceCard"><div className="deviceCardVisual">CHAVE 10<br/>VISÃO GERAL</div><div><h3>Celular</h3><ul><li>Acesso de onde estiver</li><li>Visualização rápida</li><li>Atalhos para o dia a dia</li></ul></div></div><div className="deviceCard"><div className="deviceCardVisual">CHAVE 10<br/>ORDENS</div><div><h3>Tablet</h3><ul><li>Interface otimizada</li><li>Ideal para a oficina</li><li>Mais produtividade</li></ul></div></div><div className="deviceCard"><div className="deviceCardVisual">CHAVE 10</div><div><h3>Notebook</h3><ul><li>Tela ampla</li><li>Mais produtividade</li><li>Gestão completa</li></ul></div></div><div className="deviceCard"><div className="deviceCardVisual">CHAVE 10</div><div><h3>Computador</h3><ul><li>Sistema completo</li><li>Ideal para uso diário</li><li>Todos os recursos</li></ul></div></div></div></div></section>
-<section id="planos" className="planBand"><div className="planInner"><div><div className="eyebrow">PLANOS ACESSÍVEIS</div><h2 style={{margin:"5px 0"}}>Comece agora por apenas</h2><div className="price">R$ 29,99<span style={{fontSize:18}}>/mês</span></div><p>Sem fidelidade. Cancele quando quiser.</p></div><ul><li>Todas as funcionalidades</li><li>Suporte especializado</li><li>Atualizações incluídas</li><li>Sem fidelidade</li></ul><div style={{textAlign:"center"}}><a className="btn orange" href={MERCADO_PAGO_URL}>🚀 Quero começar agora →</a><p>Pagamento seguro via Mercado Pago</p></div></div></section>
+<section id="planos" className="planBand"><div className="planInner"><div><div className="eyebrow">PLANOS ACESSÍVEIS</div><h2 style={{margin:"5px 0"}}>Comece agora por apenas</h2><div className="price">R$ 29,99<span style={{fontSize:18}}>/mês</span></div><p>Sem instalação. Cancele quando quiser.</p></div><ul><li>Todas as funcionalidades</li><li>Suporte em português</li><li>Acesso pelo navegador</li><li>Sem fidelidade</li></ul><div style={{textAlign:"center"}}><a className="btn orange" href={MERCADO_PAGO_URL}>🚀 Quero começar agora →</a><p>Pagamento seguro via Mercado Pago</p></div></div></section>
 <section id="duvidas" className="featureTitle"><div className="eyebrow">DÚVIDAS</div><h2>Perguntas frequentes</h2><p>Precisa instalar? Não. O Chave 10 funciona online. Posso usar em mais de um computador? Sim. Como pago? Via Mercado Pago.</p></section>
 <footer className="footer"><h2>Pronto para levar sua oficina a um novo nível?</h2><a className="btn orange" href={MERCADO_PAGO_URL}>Começar agora →</a><p>© 2026 Chave 10. Todos os direitos reservados.</p></footer>
 <a className="wa" href="https://wa.me/" aria-label="WhatsApp">◔</a>
