@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name":"Chave 10",
+    "slug":"chave-10",
+    "version":"1.0.0",
+    "orientation":"portrait",
+    "scheme":"chave10",
+    "userInterfaceStyle":"light",
+    "newArchEnabled":true,
+    "plugins":["expo-router","expo-secure-store"],
+    "android":{"package":"com.chave10tec.app"},
+    "ios":{"bundleIdentifier":"com.chave10tec.app"}
+  }
+}
