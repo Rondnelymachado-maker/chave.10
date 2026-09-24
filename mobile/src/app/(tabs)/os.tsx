@@ -1,35 +1,206 @@
 import {useEffect,useMemo,useState} from "react";
 import {ActivityIndicator,Alert,FlatList,Modal,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from "react-native";
-import {supabase} from "@/lib/supabase"; import {getOfficeId} from "@/lib/office";
+import {supabase} from "@/lib/supabase";
+import {getOfficeId} from "@/lib/office";
+
 type O={id:string;number:string;client_id:string;description:string|null;status:string;total:number};
-type C={id:string;name:string}; type V={id:string;client_id:string;plate:string|null;brand:string|null;model:string|null};
-type P={id:string;description:string;quantity:number;unit_price:number}; type Item={product_id:string;quantity:string;include_price:boolean};
+type C={id:string;name:string};
+type V={id:string;client_id:string;plate:string|null;brand:string|null;model:string|null};
+type P={id:string;description:string;quantity:number;unit_price:number};
+type Item={product_id:string;quantity:string;include_price:boolean};
+
 const money=(v:string)=>Number(String(v||"").replace(/\./g,"").replace(",","."))||0;
 const brl=(n:number)=>`R$ ${Number(n||0).toLocaleString("pt-BR",{minimumFractionDigits:2})}`;
+
 export default function OS(){
- const[loading,setLoading]=useState(true),[saving,setSaving]=useState(false),[orders,setOrders]=useState<O[]>([]),[clients,setClients]=useState<C[]>([]),[vehicles,setVehicles]=useState<V[]>([]),[products,setProducts]=useState<P[]>([]);
- const[modal,setModal]=useState(false),[client,setClient]=useState(""),[vehicle,setVehicle]=useState(""),[service,setService]=useState(""),[labor,setLabor]=useState(""),[parts,setParts]=useState(""),[discount,setDiscount]=useState(""),[quoteItems,setQuoteItems]=useState<Item[]>([]),[picker,setPicker]=useState<number|null>(null),[error,setError]=useState("");
- async function load(){setLoading(true);try{const id=await getOfficeId();const[o,c,v,p]=await Promise.all([supabase.from("service_orders").select("id,number,client_id,description,status,total").eq("office_id",id).order("created_at",{ascending:false}),supabase.from("clients").select("id,name").eq("office_id",id).order("name"),supabase.from("vehicles").select("id,client_id,plate,brand,model").eq("office_id",id).order("created_at",{ascending:false}),supabase.from("products").select("id,description,quantity,unit_price").eq("office_id",id).order("description")]);const e=o.error||c.error||v.error||p.error;if(e)throw e;setOrders(o.data||[]);setClients(c.data||[]);setVehicles(v.data||[]);setProducts(p.data||[])}catch(e){setError(e instanceof Error?e.message:"Erro ao carregar OS")}finally{setLoading(false)}}
+ const[loading,setLoading]=useState(true);
+ const[saving,setSaving]=useState(false);
+ const[orders,setOrders]=useState<O[]>([]);
+ const[clients,setClients]=useState<C[]>([]);
+ const[vehicles,setVehicles]=useState<V[]>([]);
+ const[products,setProducts]=useState<P[]>([]);
+ const[modal,setModal]=useState(false);
+ const[client,setClient]=useState("");
+ const[vehicle,setVehicle]=useState("");
+ const[service,setService]=useState("");
+ const[labor,setLabor]=useState("");
+ const[parts,setParts]=useState("");
+ const[discount,setDiscount]=useState("");
+ const[quoteItems,setQuoteItems]=useState<Item[]>([]);
+ const[picker,setPicker]=useState<number|null>(null);
+ const[error,setError]=useState("");
+
+ async function load(){
+  setLoading(true);
+  try{
+   const id=await getOfficeId();
+   const[o,c,v,p]=await Promise.all([
+    supabase.from("service_orders").select("id,number,client_id,description,status,total").eq("office_id",id).order("created_at",{ascending:false}),
+    supabase.from("clients").select("id,name").eq("office_id",id).order("name"),
+    supabase.from("vehicles").select("id,client_id,plate,brand,model").eq("office_id",id).order("created_at",{ascending:false}),
+    supabase.from("products").select("id,description,quantity,unit_price").eq("office_id",id).order("description")
+   ]);
+   const e=o.error||c.error||v.error||p.error;
+   if(e)throw e;
+   setOrders(o.data||[]);
+   setClients(c.data||[]);
+   setVehicles(v.data||[]);
+   setProducts(p.data||[]);
+  }catch(e){
+   setError(e instanceof Error?e.message:"Erro ao carregar OS");
+  }finally{
+   setLoading(false);
+  }
+ }
+
  useEffect(()=>{load()},[]);
- const calcParts=useMemo(()=>quoteItems.reduce((sum,i)=>{const p=products.find(x=>x.id===i.product_id);return sum+(i.include_price&&p?money(i.quantity)*Number(p.unit_price||0):0)},0),[quoteItems,products]);
+
+ const calcParts=useMemo(()=>quoteItems.reduce((sum,i)=>{
+  const p=products.find(x=>x.id===i.product_id);
+  return sum+(i.include_price&&p?money(i.quantity)*Number(p.unit_price||0):0);
+ },0),[quoteItems,products]);
+
  const total=Math.max(0,money(labor)+(parts.trim()?money(parts):calcParts)-money(discount));
- const reset=()=>{setClient("");setVehicle("");setService("");setLabor("");setParts("");setDiscount("");setQuoteItems([]);setError("")};
- async function save(){if(!client||!service.trim()){setError("Informe cliente e serviço.");return}const valid=quoteItems.filter(i=>i.product_id&&money(i.quantity)>0);for(const i of valid){const p=products.find(x=>x.id===i.product_id);if(p&&money(i.quantity)>Number(p.quantity)){setError(`Estoque insuficiente: ${p.description}.`);return}}setSaving(true);setError("");try{const number=`OS-${Date.now().toString().slice(-6)}`;const partsValue=parts.trim()?money(parts):calcParts;const{error:e}=await supabase.rpc("create_service_order_with_parts",{p_client_id:client,p_vehicle_id:vehicle||null,p_number:number,p_description:service.trim(),p_labor:money(labor),p_parts:partsValue,p_discount:money(discount),p_notes:null,p_items:valid.map(i=>({product_id:i.product_id,quantity:money(i.quantity)}))});if(e)throw e;setModal(false);reset();await load();Alert.alert("OS criada",`${number} · ${brl(total)}`)}catch(e){setError(e instanceof Error?e.message:"Não foi possível salvar a OS")}finally{setSaving(false)}}
- async function status(id:string,status:string){const{error:e}=await supabase.from("service_orders").update({status,updated_at:new Date().toISOString(),...(status==="Concluída"?{completed_at:new Date().toISOString()}:{}),...(status==="Entregue"?{delivered_at:new Date().toISOString()}: {})}).eq("id",id);if(e)setError(e.message);else load()}
+
+ const reset=()=>{
+  setClient("");
+  setVehicle("");
+  setService("");
+  setLabor("");
+  setParts("");
+  setDiscount("");
+  setQuoteItems([]);
+  setError("");
+ };
+
+ async function save(){
+  if(!client||!service.trim()){
+   setError("Informe cliente e serviço.");
+   return;
+  }
+  const valid=quoteItems.filter(i=>i.product_id&&money(i.quantity)>0);
+  for(const i of valid){
+   const p=products.find(x=>x.id===i.product_id);
+   if(p&&money(i.quantity)>Number(p.quantity)){
+    setError(`Estoque insuficiente: ${p.description}.`);
+    return;
+   }
+  }
+  setSaving(true);
+  setError("");
+  try{
+   const number=`OS-${Date.now().toString().slice(-6)}`;
+   const partsValue=parts.trim()?money(parts):calcParts;
+   const{error:e}=await supabase.rpc("create_service_order_with_parts",{
+    p_client_id:client,
+    p_vehicle_id:vehicle||null,
+    p_number:number,
+    p_description:service.trim(),
+    p_labor:money(labor),
+    p_parts:partsValue,
+    p_discount:money(discount),
+    p_notes:null,
+    p_items:valid.map(i=>({product_id:i.product_id,quantity:money(i.quantity)}))
+   });
+   if(e)throw e;
+   setModal(false);
+   reset();
+   await load();
+   Alert.alert("OS criada",`${number} · ${brl(total)}`);
+  }catch(e){
+   setError(e instanceof Error?e.message:"Não foi possível salvar a OS");
+  }finally{
+   setSaving(false);
+  }
+ }
+
+ async function updateStatus(id:string,nextStatus:string){
+  const payload:{status:string;updated_at:string;completed_at?:string;delivered_at?:string}={
+   status:nextStatus,
+   updated_at:new Date().toISOString()
+  };
+  if(nextStatus==="Concluída")payload.completed_at=new Date().toISOString();
+  if(nextStatus==="Entregue")payload.delivered_at=new Date().toISOString();
+  const{error:e}=await supabase.from("service_orders").update(payload).eq("id",id);
+  if(e)setError(e.message);
+  else await load();
+ }
+
  if(loading)return <View style={s.center}><ActivityIndicator color="#f59b32"/></View>;
- return <View style={s.screen}><FlatList data={orders} keyExtractor={x=>x.id} contentContainerStyle={s.content} ListHeaderComponent={<View style={s.header}><View><Text style={s.title}>Ordens de serviço</Text><Text style={s.sub}>Criação e acompanhamento das OS.</Text></View><Pressable style={s.btn} onPress={()=>{reset();setModal(true)}}><Text style={s.btnText}>+ Nova</Text></Pressable></View>} ListEmptyComponent={<Text style={s.empty}>Nenhuma OS cadastrada.</Text>} renderItem={({item})=><View style={s.card}><Text style={s.num}>{item.number}</Text><Text style={s.client}>{clients.find(c=>c.id===item.client_id)?.name||"Cliente"}</Text><Text style={s.service}>{item.description||"Serviço"}</Text><Text style={s.total}>{brl(item.total)}</Text><Text style={s.status}>Status: {item.status}</Text><View style={s.actions}>{["Aberta","Em andamento","Concluída","Entregue","Cancelada"].map(v=><Pressable key={v} onPress={()=>status(item.id,v)} style={[s.statusBtn,item.status===v&&s.active]}><Text style={item.status===v?s.activeText:s.statusText}>{v}</Text></Pressable>)}</View></View>)}/>
- <Modal visible={modal} animationType="slide" onRequestClose={()=>!saving&&setModal(false)}><View style={s.modal}><View style={s.modalHeader}><Text style={s.modalTitle}>Nova OS</Text><Pressable disabled={saving} onPress={()=>setModal(false)}><Text style={s.close}>×</Text></Pressable></View><ScrollView contentContainerStyle={s.form}>
- <Text style={s.label}>Cliente *</Text><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chips}>{clients.map(c=><Pressable key={c.id} onPress={()=>{setClient(c.id);setVehicle("")}} style={[s.chip,client===c.id&&s.chipActive]}><Text style={client===c.id?s.chipTextActive:s.chipText}>{c.name}</Text></Pressable>)}</ScrollView>
- <Text style={s.label}>Veículo</Text><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chips}>{vehicles.filter(v=>v.client_id===client).map(v=><Pressable key={v.id} onPress={()=>setVehicle(v.id)} style={[s.chip,vehicle===v.id&&s.chipActive]}><Text style={vehicle===v.id?s.chipTextActive:s.chipText}>{[v.brand,v.model].filter(Boolean).join(" ")||"Veículo"}{v.plate?" · "+v.plate:""}</Text></Pressable>)}</ScrollView>
- <Text style={s.label}>Serviço *</Text><TextInput style={s.inputArea} multiline value={service} onChangeText={setService} placeholder="Descrição do serviço"/>
- <View style={s.section}><View style={s.row}><Text style={s.sectionTitle}>Peças do estoque</Text><Pressable style={s.smallButton} onPress={()=>{setQuoteItems(x=>[...x,{product_id:"",quantity:"1",include_price:true}]);setPicker(quoteItems.length)}}><Text style={s.smallText}>+ Adicionar</Text></Pressable></View>
- {quoteItems.map((it,idx)=>{const p=products.find(x=>x.id===it.product_id);return <View key={idx} style={s.item}><Pressable style={s.productSelect} onPress={()=>setPicker(idx)}><Text style={p?s.itemText:s.placeholder}>{p?p.description:"Selecionar peça"}</Text></Pressable><TextInput style={s.qty} keyboardType="decimal-pad" value={it.quantity} onChangeText={v=>setQuoteItems(xs=>xs.map((x,n)=>n===idx?{...x,quantity:v}:x))} placeholder="Qtd."/><Pressable onPress={()=>setQuoteItems(xs=>xs.filter((_,n)=>n!==idx))}><Text style={s.remove}>×</Text></Pressable><Pressable style={s.checkRow} onPress={()=>setQuoteItems(xs=>xs.map((x,n)=>n===idx?{...x,include_price:!x.include_price}:x))}><View style={[s.check,it.include_price&&s.checkOn]}>{it.include_price?<Text style={s.checkMark}>✓</Text>:null}</View><Text style={s.checkText}>Incluir preço {p?brl(p.unit_price):""}</Text></Pressable></View>})}
- </View>
- <Text style={s.label}>Mão de obra (R$)</Text><TextInput style={s.input} keyboardType="decimal-pad" value={labor} onChangeText={setLabor} placeholder="0,00"/>
- <Text style={s.label}>Valor de peças (R$) — editável</Text><TextInput style={s.input} keyboardType="decimal-pad" value={parts||calcParts.toFixed(2).replace(".",",")} onChangeText={setParts} placeholder="0,00"/><Text style={s.hint}>Você pode ajustar manualmente o valor das peças.</Text>
- <Text style={s.label}>Desconto (R$)</Text><TextInput style={s.input} keyboardType="decimal-pad" value={discount} onChangeText={setDiscount} placeholder="0,00"/>
- <View style={s.summary}><Text style={s.summaryLabel}>Total</Text><Text style={s.summaryValue}>{brl(total)}</Text></View><Pressable disabled={saving} style={[s.saveButton,saving&&s.disabled]} onPress={save}><Text style={s.saveText}>{saving?"Salvando...":"Salvar OS"}</Text></Pressable>
- </ScrollView></View></Modal>
- <Modal visible={picker!==null} transparent animationType="slide" onRequestClose={()=>setPicker(null)}><View style={s.overlay}><View style={s.picker}><Text style={s.pickerTitle}>Selecionar peça</Text><FlatList data={products} keyExtractor={x=>x.id} renderItem={({item})=><Pressable style={s.productRow} onPress={()=>{const i=picker;if(i!==null)setQuoteItems(xs=>xs.map((x,n)=>n===i?{...x,product_id:item.id}:x));setPicker(null)}}><Text style={s.itemText}>{item.description}</Text><Text style={s.muted}>Estoque: {item.quantity} · {brl(item.unit_price)}</Text></Pressable>}/><Pressable style={s.cancel} onPress={()=>setPicker(null)}><Text>Cancelar</Text></Pressable></View></View></Modal>
- {error?<Text style={s.error}>{error}</Text>:null}</View>}
-const s=StyleSheet.create({screen:{flex:1,backgroundColor:"#f5f7fa"},content:{padding:18},center:{flex:1,alignItems:"center",justifyContent:"center"},header:{flexDirection:"row",justifyContent:"space-between",alignItems:"center",marginBottom:16},title:{fontSize:25,fontWeight:"800",color:"#172033"},sub:{color:"#687386"},btn:{backgroundColor:"#f59b32",padding:12,borderRadius:10},btnText:{color:"#fff",fontWeight:"800"},card:{backgroundColor:"#fff",padding:16,borderRadius:14,marginBottom:10,borderWidth:1,borderColor:"#e5e7eb"},num:{fontWeight:"800"},client:{fontSize:17,fontWeight:"800",marginTop:7},service:{marginTop:7,color:"#344054"},total:{fontSize:17,fontWeight:"900",marginTop:9},status:{color:"#687386",marginTop:5},actions:{flexDirection:"row",flexWrap:"wrap",gap:6,marginTop:10},statusBtn:{borderWidth:1,borderColor:"#d7dce3",padding:7,borderRadius:7},active:{backgroundColor:"#172033"},statusText:{fontSize:10},activeText:{fontSize:10,color:"#fff"},empty:{color:"#687386",padding:20},error:{color:"#9b2226",padding:12},modal:{flex:1,backgroundColor:"#f5f7fa"},modalHeader:{backgroundColor:"#172033",paddingTop:55,paddingHorizontal:18,paddingBottom:16,flexDirection:"row",justifyContent:"space-between",alignItems:"center"},modalTitle:{fontSize:20,fontWeight:"800",color:"#fff"},close:{fontSize:30,color:"#fff"},form:{padding:18,paddingBottom:40},label:{fontSize:13,fontWeight:"800",color:"#344054",marginTop:12,marginBottom:5},chips:{gap:8,paddingVertical:4},chip:{backgroundColor:"#fff",borderWidth:1,borderColor:"#d7dce3",borderRadius:20,paddingHorizontal:12,paddingVertical:9},chipActive:{backgroundColor:"#172033",borderColor:"#172033"},chipText:{color:"#344054"},chipTextActive:{color:"#fff",fontWeight:"800"},input:{backgroundColor:"#fff",borderWidth:1,borderColor:"#d7dce3",borderRadius:10,padding:13,fontSize:16},inputArea:{backgroundColor:"#fff",borderWidth:1,borderColor:"#d7dce3",borderRadius:10,padding:13,minHeight:85,textAlignVertical:"top"},section:{backgroundColor:"#fff",borderWidth:1,borderColor:"#e5e7eb",borderRadius:12,padding:12,marginTop:15},row:{flexDirection:"row",justifyContent:"space-between",alignItems:"center"},sectionTitle:{fontSize:16,fontWeight:"800"},smallButton:{backgroundColor:"#eef2f6",paddingHorizontal:10,paddingVertical:8,borderRadius:8},smallText:{fontWeight:"800"},item:{borderTopWidth:1,borderTopColor:"#eef0f3",paddingTop:10,marginTop:10},productSelect:{backgroundColor:"#f8fafc",borderWidth:1,borderColor:"#d7dce3",borderRadius:9,padding:12},itemText:{fontWeight:"700",color:"#172033"},placeholder:{color:"#9aa3b2"},qty:{marginTop:7,width:90,backgroundColor:"#fff",borderWidth:1,borderColor:"#d7dce3",borderRadius:9,padding:10},remove:{position:"absolute",right:2,top:2,fontSize:24,color:"#9b2226"},checkRow:{flexDirection:"row",alignItems:"center",marginTop:8},check:{width:20,height:20,borderRadius:5,borderWidth:1,borderColor:"#b8c0cc",marginRight:7,alignItems:"center",justifyContent:"center"},checkOn:{backgroundColor:"#f59b32",borderColor:"#f59b32"},checkMark:{color:"#fff",fontWeight:"900"},checkText:{color:"#687386",fontSize:12},hint:{fontSize:11,color:"#687386",marginTop:4},summary:{backgroundColor:"#172033",borderRadius:12,padding:16,marginTop:16,flexDirection:"row",justifyContent:"space-between"},summaryLabel:{color:"#cbd2dc"},summaryValue:{color:"#fff",fontSize:20,fontWeight:"900"},saveButton:{backgroundColor:"#f59b32",borderRadius:11,padding:15,alignItems:"center",marginTop:15},saveText:{color:"#fff",fontWeight:"900",fontSize:16},disabled:{opacity:.6},overlay:{flex:1,backgroundColor:"rgba(0,0,0,.5)",justifyContent:"flex-end"},picker:{backgroundColor:"#fff",borderTopLeftRadius:18,borderTopRightRadius:18,maxHeight:"75%",padding:18},pickerTitle:{fontSize:20,fontWeight:"900",marginBottom:12},productRow:{paddingVertical:13,borderBottomWidth:1,borderBottomColor:"#eef0f3"},muted:{color:"#687386",marginTop:4},cancel:{marginTop:12,padding:14,alignItems:"center",backgroundColor:"#eef2f6",borderRadius:10}});
+
+ return <View style={s.screen}>
+  <FlatList
+   data={orders}
+   keyExtractor={x=>x.id}
+   contentContainerStyle={s.content}
+   ListHeaderComponent={<View style={s.header}><View><Text style={s.title}>Ordens de serviço</Text><Text style={s.sub}>Criação e acompanhamento das OS.</Text></View><Pressable style={s.btn} onPress={()=>{reset();setModal(true)}}><Text style={s.btnText}>+ Nova</Text></Pressable></View>}
+   ListEmptyComponent={<Text style={s.empty}>Nenhuma OS cadastrada.</Text>}
+   renderItem={({item})=><View style={s.card}><Text style={s.num}>{item.number}</Text><Text style={s.client}>{clients.find(c=>c.id===item.client_id)?.name||"Cliente"}</Text><Text style={s.service}>{item.description||"Serviço"}</Text><Text style={s.total}>{brl(item.total)}</Text><Text style={s.status}>Status: {item.status}</Text><View style={s.actions}>{["Aberta","Em andamento","Concluída","Entregue","Cancelada"].map(v=><Pressable key={v} onPress={()=>updateStatus(item.id,v)} style={[s.statusBtn,item.status===v&&s.active]}><Text style={item.status===v?s.activeText:s.statusText}>{v}</Text></Pressable>)}</View></View>}
+  />
+
+  <Modal visible={modal} animationType="slide" onRequestClose={()=>!saving&&setModal(false)}>
+   <View style={s.modal}>
+    <View style={s.modalHeader}><Text style={s.modalTitle}>Nova OS</Text><Pressable disabled={saving} onPress={()=>setModal(false)}><Text style={s.close}>×</Text></Pressable></View>
+    <ScrollView contentContainerStyle={s.form}>
+     <Text style={s.label}>Cliente *</Text>
+     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chips}>{clients.map(c=><Pressable key={c.id} onPress={()=>{setClient(c.id);setVehicle("")}} style={[s.chip,client===c.id&&s.chipActive]}><Text style={client===c.id?s.chipTextActive:s.chipText}>{c.name}</Text></Pressable>)}</ScrollView>
+
+     <Text style={s.label}>Veículo</Text>
+     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chips}>{vehicles.filter(v=>v.client_id===client).map(v=><Pressable key={v.id} onPress={()=>setVehicle(v.id)} style={[s.chip,vehicle===v.id&&s.chipActive]}><Text style={vehicle===v.id?s.chipTextActive:s.chipText}>{[v.brand,v.model].filter(Boolean).join(" ")||"Veículo"}{v.plate?" · "+v.plate:""}</Text></Pressable>)}</ScrollView>
+
+     <Text style={s.label}>Serviço *</Text>
+     <TextInput style={s.inputArea} multiline value={service} onChangeText={setService} placeholder="Descrição do serviço"/>
+
+     <View style={s.section}>
+      <View style={s.row}><Text style={s.sectionTitle}>Peças do estoque</Text><Pressable style={s.smallButton} onPress={()=>{setQuoteItems(x=>[...x,{product_id:"",quantity:"1",include_price:true}]);setPicker(quoteItems.length)}}><Text style={s.smallText}>+ Adicionar</Text></Pressable></View>
+      {quoteItems.map((it,idx)=>{
+       const p=products.find(x=>x.id===it.product_id);
+       return <View key={idx} style={s.item}>
+        <Pressable style={s.productSelect} onPress={()=>setPicker(idx)}><Text style={p?s.itemText:s.placeholder}>{p?p.description:"Selecionar peça"}</Text></Pressable>
+        <TextInput style={s.qty} keyboardType="decimal-pad" value={it.quantity} onChangeText={v=>setQuoteItems(xs=>xs.map((x,n)=>n===idx?{...x,quantity:v}:x))} placeholder="Qtd."/>
+        <Pressable onPress={()=>setQuoteItems(xs=>xs.filter((_,n)=>n!==idx))}><Text style={s.remove}>×</Text></Pressable>
+        <Pressable style={s.checkRow} onPress={()=>setQuoteItems(xs=>xs.map((x,n)=>n===idx?{...x,include_price:!x.include_price}:x))}><View style={[s.check,it.include_price&&s.checkOn]}>{it.include_price?<Text style={s.checkMark}>✓</Text>:null}</View><Text style={s.checkText}>Incluir preço {p?brl(p.unit_price):""}</Text></Pressable>
+       </View>
+      })}
+     </View>
+
+     <Text style={s.label}>Mão de obra (R$)</Text>
+     <TextInput style={s.input} keyboardType="decimal-pad" value={labor} onChangeText={setLabor} placeholder="0,00"/>
+     <Text style={s.label}>Valor de peças (R$) — editável</Text>
+     <TextInput style={s.input} keyboardType="decimal-pad" value={parts||calcParts.toFixed(2).replace(".",",")} onChangeText={setParts} placeholder="0,00"/>
+     <Text style={s.hint}>Você pode ajustar manualmente o valor das peças.</Text>
+     <Text style={s.label}>Desconto (R$)</Text>
+     <TextInput style={s.input} keyboardType="decimal-pad" value={discount} onChangeText={setDiscount} placeholder="0,00"/>
+
+     <View style={s.summary}><Text style={s.summaryLabel}>Total</Text><Text style={s.summaryValue}>{brl(total)}</Text></View>
+     <Pressable disabled={saving} style={[s.saveButton,saving&&s.disabled]} onPress={save}><Text style={s.saveText}>{saving?"Salvando...":"Salvar OS"}</Text></Pressable>
+    </ScrollView>
+   </View>
+  </Modal>
+
+  <Modal visible={picker!==null} transparent animationType="slide" onRequestClose={()=>setPicker(null)}>
+   <View style={s.overlay}><View style={s.picker}><Text style={s.pickerTitle}>Selecionar peça</Text><FlatList data={products} keyExtractor={x=>x.id} renderItem={({item})=><Pressable style={s.productRow} onPress={()=>{const i=picker;if(i!==null)setQuoteItems(xs=>xs.map((x,n)=>n===i?{...x,product_id:item.id}:x));setPicker(null)}}><Text style={s.itemText}>{item.description}</Text><Text style={s.muted}>Estoque: {item.quantity} · {brl(item.unit_price)}</Text></Pressable>}/><Pressable style={s.cancel} onPress={()=>setPicker(null)}><Text>Cancelar</Text></Pressable></View></View>
+  </Modal>
+
+  {error?<Text style={s.error}>{error}</Text>:null}
+ </View>;
+}
+
+const s=StyleSheet.create({
+ screen:{flex:1,backgroundColor:"#f5f7fa"},content:{padding:18},center:{flex:1,alignItems:"center",justifyContent:"center"},
+ header:{flexDirection:"row",justifyContent:"space-between",alignItems:"center",marginBottom:16},title:{fontSize:25,fontWeight:"800",color:"#172033"},sub:{color:"#687386"},
+ btn:{backgroundColor:"#f59b32",padding:12,borderRadius:10},btnText:{color:"#fff",fontWeight:"800"},card:{backgroundColor:"#fff",padding:16,borderRadius:14,marginBottom:10,borderWidth:1,borderColor:"#e5e7eb"},
+ num:{fontWeight:"800"},client:{fontSize:17,fontWeight:"800",marginTop:7},service:{marginTop:7,color:"#344054"},total:{fontSize:17,fontWeight:"900",marginTop:9},status:{color:"#687386",marginTop:5},
+ actions:{flexDirection:"row",flexWrap:"wrap",gap:6,marginTop:10},statusBtn:{borderWidth:1,borderColor:"#d7dce3",padding:7,borderRadius:7},active:{backgroundColor:"#172033"},statusText:{fontSize:10},activeText:{fontSize:10,color:"#fff"},
+ empty:{color:"#687386",padding:20},error:{color:"#9b2226",padding:12},modal:{flex:1,backgroundColor:"#f5f7fa"},modalHeader:{backgroundColor:"#172033",paddingTop:55,paddingHorizontal:18,paddingBottom:16,flexDirection:"row",justifyContent:"space-between",alignItems:"center"},
+ modalTitle:{fontSize:20,fontWeight:"800",color:"#fff"},close:{fontSize:30,color:"#fff"},form:{padding:18,paddingBottom:40},label:{fontSize:13,fontWeight:"800",color:"#344054",marginTop:12,marginBottom:5},chips:{gap:8,paddingVertical:4},
+ chip:{backgroundColor:"#fff",borderWidth:1,borderColor:"#d7dce3",borderRadius:20,paddingHorizontal:12,paddingVertical:9},chipActive:{backgroundColor:"#172033",borderColor:"#172033"},chipText:{color:"#344054"},chipTextActive:{color:"#fff",fontWeight:"800"},
+ input:{backgroundColor:"#fff",borderWidth:1,borderColor:"#d7dce3",borderRadius:10,padding:13,fontSize:16},inputArea:{backgroundColor:"#fff",borderWidth:1,borderColor:"#d7dce3",borderRadius:10,padding:13,minHeight:85,textAlignVertical:"top"},
+ section:{backgroundColor:"#fff",borderWidth:1,borderColor:"#e5e7eb",borderRadius:12,padding:12,marginTop:15},row:{flexDirection:"row",justifyContent:"space-between",alignItems:"center"},sectionTitle:{fontSize:16,fontWeight:"800"},
+ smallButton:{backgroundColor:"#eef2f6",paddingHorizontal:10,paddingVertical:8,borderRadius:8},smallText:{fontWeight:"800"},item:{borderTopWidth:1,borderTopColor:"#eef0f3",paddingTop:10,marginTop:10},productSelect:{backgroundColor:"#f8fafc",borderWidth:1,borderColor:"#d7dce3",borderRadius:9,padding:12},
+ itemText:{fontWeight:"700",color:"#172033"},placeholder:{color:"#9aa3b2"},qty:{marginTop:7,width:90,backgroundColor:"#fff",borderWidth:1,borderColor:"#d7dce3",borderRadius:9,padding:10},remove:{position:"absolute",right:2,top:2,fontSize:24,color:"#9b2226"},
+ checkRow:{flexDirection:"row",alignItems:"center",marginTop:8},check:{width:20,height:20,borderRadius:5,borderWidth:1,borderColor:"#b8c0cc",marginRight:7,alignItems:"center",justifyContent:"center"},checkOn:{backgroundColor:"#f59b32",borderColor:"#f59b32"},checkMark:{color:"#fff",fontWeight:"900"},checkText:{color:"#687386",fontSize:12},hint:{fontSize:11,color:"#687386",marginTop:4},
+ summary:{backgroundColor:"#172033",borderRadius:12,padding:16,marginTop:16,flexDirection:"row",justifyContent:"space-between"},summaryLabel:{color:"#cbd2dc"},summaryValue:{color:"#fff",fontSize:20,fontWeight:"900"},
+ saveButton:{backgroundColor:"#f59b32",borderRadius:11,padding:15,alignItems:"center",marginTop:15},saveText:{color:"#fff",fontWeight:"900",fontSize:16},disabled:{opacity:.6},overlay:{flex:1,backgroundColor:"rgba(0,0,0,.5)",justifyContent:"flex-end"},
+ picker:{backgroundColor:"#fff",borderTopLeftRadius:18,borderTopRightRadius:18,maxHeight:"75%",padding:18},pickerTitle:{fontSize:20,fontWeight:"900",marginBottom:12},productRow:{paddingVertical:13,borderBottomWidth:1,borderBottomColor:"#eef0f3"},muted:{color:"#687386",marginTop:4},cancel:{marginTop:12,padding:14,alignItems:"center",backgroundColor:"#eef2f6",borderRadius:10}
+});
