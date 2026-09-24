@@ -1,0 +1,16 @@
+name: Chave 10 Mobile Preview
+
+on:
+  push:
+    branches:
+      - mobile-app
+    paths:
+      - mobile/**
+
+jobs:
+  build_android:
+    name: Build Android Preview
+    type: build
+    params:
+      platform: android
+      profile: preview
