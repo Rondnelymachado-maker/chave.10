@@ -9,6 +9,7 @@
     "newArchEnabled":true,
     "plugins":["expo-router","expo-secure-store"],
     "android":{"package":"com.chave10tec.app"},
-    "ios":{"bundleIdentifier":"com.chave10tec.app"}
+    "ios":{"bundleIdentifier":"com.chave10tec.app"},
+    "extra":{"eas":{"projectId":"c8398c0b-80a0-4e75-8410-b265fb715cb1"}}
   }
 }
