@@ -4,6 +4,34 @@ import AuthGate from "./auth-gate";
 
 const siteUrl = "https://chave10tec.com.br";
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": siteUrl + "/#website",
+      url: siteUrl + "/",
+      name: "Chave 10",
+      alternateName: "Chave10 Tec",
+      inLanguage: "pt-BR",
+      description:
+        "Sistema online de gestão para oficinas mecânicas, com clientes, veículos, orçamentos, ordens de serviço, estoque e financeiro.",
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": siteUrl + "/#software",
+      name: "Chave 10",
+      alternateName: "Chave10 Tec",
+      url: siteUrl + "/",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      inLanguage: "pt-BR",
+      description:
+        "Sistema de gestão online para oficinas mecânicas, com controle de clientes, veículos, orçamentos, ordens de serviço, estoque e financeiro.",
+    },
+  ],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -54,6 +82,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         <AuthGate>{children}</AuthGate>
       </body>
     </html>
