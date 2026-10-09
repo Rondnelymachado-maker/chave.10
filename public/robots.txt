@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://chave10tec.com.br/sitemap.xml
